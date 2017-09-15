@@ -6,7 +6,7 @@ from pyspec import spectrum
 
 plt.close('all')
 
-pathi = "output/test_qg/"
+pathi = "output/reference256/"
 
 setup = h5py.File(pathi+"setup.h5")
 k,l = setup['grid/k'][:], setup['grid/l'][:]
@@ -36,14 +36,14 @@ for fni in files:
 E = E.mean(axis=0)
 
 plt.figure()
-kr = np.array([0.1,10])
-plt.loglog(kr,(kr**-3)/2,color='0.5')
-plt.loglog(kr,(kr**-(5/3))/1.5,color='0.5')
+kr = np.array([0.1,22])
+plt.loglog(kr,(kr**-3)/0.5,color='0.5')
+#plt.loglog(kr,(kr**-(5/3))/1.5,color='0.5')
 plt.loglog(ki/kf,E,linewidth=3)
 plt.ylim(1e-4,1e2)
-plt.xlim(0.1,10)
+plt.xlim(0.1,22)
 plt.xlabel(r'Wavenumber [$|\mathbf{k}|/k_f$]')
 plt.ylabel(r'Kinetic energy density [m$^3$ s$^{-2}$]')
 plt.text(8,1.25e-3,"-3")
-plt.text(7.5,4e-2,"-5/3")
-plt.savefig("figs/spectrum_qg-only")
+#plt.text(7.5,4e-2,"-5/3")
+plt.savefig("figs/spectrum_qg-niw")
