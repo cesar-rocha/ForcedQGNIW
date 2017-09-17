@@ -49,14 +49,14 @@ nu4  = 1e8
 nu4w = 5e8
 
 # Forced only dynamics
-model = CoupledModel.Model(L=L,nx=nx, tmax = tmax,dt = dt, twrite=100,
+model = CoupledModel.Model(L=L,nx=nx, tmax = tmax,dt = dt, twrite=200,
                     nu4=nu4,mu=mu,nu4w=nu4w,nu=0,nuw=0,muw=4*mu, use_filter=False,save_to_disk=True,
                     tsave_snapshots=100,path=path,
                     U = 0., tdiags=100,
                     f=f0,N=N,m=m,
                     wavenumber_forcing=kf,width_forcing=dkf,
-                    epsilon_q=epsilon, epsilon_w=2*epsilon,
-                    use_mkl=True,nthreads=16)
+                    epsilon_q=epsilon, epsilon_w=4*epsilon,
+                    use_mkl=True,nthreads=4)
 
 # non-dimensional numbers
 lamb = N/f0/m
@@ -116,7 +116,7 @@ plt.text(8.,8.5,r"$t\,\,\mu = %3.2f$" % (model.t*model.mu))
 #figname = pathi+"figs2movie/"+fni[-18:-3]+".png"
 
 
-cbaxes = fig.add_axes([0.15, 1., 0.3, 0.025]) 
+cbaxes = fig.add_axes([0.15, 1., 0.3, 0.025])
 plt.colorbar(im1, cax = cbaxes, ticks=[-.2,-.1,0,.1,.2],orientation='horizontal',label=r'Potential vorticity $[q/Q]$')
 
 ax = fig.add_subplot(122,aspect=1)
@@ -127,7 +127,7 @@ plt.xlabel(r'$x\, k_f/2\pi$')
 #plt.ylabel(r'$y\, k_f/2\pi$')
 plt.yticks([])
 
-cbaxes = fig.add_axes([0.575, 1., 0.3, 0.025]) 
+cbaxes = fig.add_axes([0.575, 1., 0.3, 0.025])
 plt.colorbar(im2,cax=cbaxes,ticks=[0,1,2,3,],orientation='horizontal',label=r'Wave action density $[\mathcal{A}/A]$')
 
 plt.savefig('figs/snapshots_pv_qg-niw', pad_inces=0, bbox_inches='tight')
@@ -148,12 +148,11 @@ wave_energy_input = model.diagnostics['wave_energy_input']['value']
 ep_phi = model.diagnostics['ep_phi']['value']
 chi_phi = model.diagnostics['chi_phi']['value']
 smalldiss_phi = model.diagnostics['smalldiss_phi']['value']
-
+smallchi_phi = model.diagnostics['smallchi_phi']['value']
 gamma_r = model.diagnostics['gamma_r']['value']
 gamma_a = model.diagnostics['gamma_a']['value']
 xi_r = model.diagnostics['xi_r']['value']
 xi_a = model.diagnostics['xi_a']['value']
-
 
 
 def remove_axes(ax):
@@ -161,7 +160,7 @@ def remove_axes(ax):
     ax.spines['top'].set_visible(False)
     ax.yaxis.set_ticks_position('left')
     ax.xaxis.set_ticks_position('bottom')
-    
+
 
 # plot energy
 fig = plt.figure(figsize=(9.5,4.))
@@ -210,24 +209,34 @@ fig = plt.figure(figsize=(9.5,4.))
 ax = fig.add_subplot(121)
 plt.plot(time*model.mu,-gamma_r,label=r'$-\Gamma_r$')
 plt.plot(time*model.mu,-gamma_a,label=r'$-\Gamma_a$')
+plt.plot(time*model.mu,xi_a,label=r'$\Xi_a$')
+plt.plot(time*model.mu,xi_r,label=r'$\Xi_r$')
 plt.plot(time*model.mu,ep_psi,label=r'$\epsilon_\psi$')
+plt.plot(time*model.mu,smalldiss_psi,label=r'$\delta_\psi$')
+plt.ylim(-1e-8,1e-8)
 plt.legend()
 plt.ylabel("Power")
 
 ax = fig.add_subplot(122)
 plt.plot(time*model.mu,gamma_r,label=r'$\Gamma_r$')
 plt.plot(time*model.mu,gamma_a,label=r'$\Gamma_a$')
-plt.plot(time*model.mu,chi_phi,label=r'$-\chi_\phi$')
+plt.plot(time*model.mu,chi_phi,label=r'$\chi_\phi$')
+plt.plot(time*model.mu,smallchi_phi,label=r'$\delta_\phi$')
 plt.legend()
 plt.ylabel("Power")
 plt.savefig('figs/rough_budgets' , pad_inces=0, bbox_inches='tight')
 
-
-# calculate spectrum
 # calculate spectrum
 E = 0.5 * np.abs(model.wv*model.ph)**2
-ki, Er = spectrum.calc_ispec(model.kk, model.ll, E)
+ki, Ei = spectrum.calc_ispec(model.kk, model.ll, E)
+
+E = 0.5 * np.abs(model.phih)**2
+_, Eiphi = spectrum.calc_ispec(model.kk, model.ll, E)
+
+E = (lamb**2) * 0.4 * np.abs(model.wv*model.phih)**2
+_, Piphi = spectrum.calc_ispec(model.kk, model.ll, E)
 
 # dt = time[1]-time[0]
 # dKE = np.gradient(KE_qg,dt)
 # dKEw = np.gradient(KE_niw,dt)
+
