@@ -129,10 +129,39 @@ plt.xlabel(r"Time $[t\,\,\mu]$")
 plt.ylabel(r"Balanced kinetic energy $[\mathcal{K} \,\, 2 \mu/\sigma_q^2]$")
 plt.savefig('figs/kinetic_energy_qg-only')
 
+# a KE_niw energy budget
+dt = time[1]-time[0]
+dKE_qg = np.gradient(KE_qg,dt)
+residual = -gamma_r-gamma_a+ep_psi+smalldiss_psi-dKE_qg+energy_input
+E = qgmodel.epsilon_q/qgmodel.mu/2
+POWER = (E)**2/Tmu
+
+fig = plt.figure(figsize=(9.5,4.))
+ax = fig.add_subplot(111)
+#plt.plot(time*model.mu,-gamma_r/POWER,label=r'$\Gamma_r$')
+#plt.plot(time*model.mu,-gamma_a/POWER,label=r'$\Gamma_a$')
+#plt.plot(time*model.mu,xi_a,label=r'$\Xi_a$')
+#plt.plot(time*model.mu,xi_r,label=r'$\Xi_r$')
+plt.plot(time*qgmodel.mu,np.ones_like(time)*qgmodel.epsilon_q/POWER,label=r'$\sigma_q^2$')
+#plt.plot(time*model.mu,energy_input/POWER,label=r'$-\langle \psi \xi_q \rangle$')
+plt.plot(time*qgmodel.mu,ep_psi/POWER,label=r'$-2\mu\mathcal{K}$')
+plt.plot(time*qgmodel.mu,smalldiss_psi/POWER,label=r'$\epsilon_\psi$')
+
+#plt.plot(time*model.mu,dKE_qg/POWER,label=r'$d\mathcal{K}/dt$')
+#plt.plot(time*model.mu,residual/POWER,label=r'residual')
+#plt.ylim(-10,10)
+plt.legend(loc=3,ncol=2)
+plt.ylabel(r"Power [$\dot \mathcal{K} \,/\, W$]")
+plt.xlabel(r"$t\,\, \mu$")
+remove_axes(ax)
+plt.savefig('figs/KE_qg_budget_test_qg-only' , pad_inces=0, bbox_inches='tight')
+
+
+
 # calculate spectrum
 # calculate spectrum
 E = 0.5 * np.abs(qgmodel.wv*qgmodel.ph)**2
-ki, Er = spectrum.calc_ispec(qgmodel.kk, qgmodel.ll, E, ndim=2)
+ki, Ei = spectrum.calc_ispec(qgmodel.kk, qgmodel.ll, E)
 
 
 # dt = time[1]-time[0]
