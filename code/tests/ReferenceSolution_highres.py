@@ -43,10 +43,10 @@ Lf = 2*np.pi/kf
 U0 = 0.5
 epsilon = (U0**2)*mu
 
-path = "output/reference512_2"
+path = "output/reference512"
 
 nu4  = 1e8
-nu4w = 5e8
+nu4w = 4e8
 
 # Forced only dynamics
 model = CoupledModel.Model(L=L,nx=nx, tmax = tmax,dt = dt, twrite=200,
@@ -56,7 +56,7 @@ model = CoupledModel.Model(L=L,nx=nx, tmax = tmax,dt = dt, twrite=200,
                     f=f0,N=N,m=m,
                     wavenumber_forcing=kf,width_forcing=dkf,
                     epsilon_q=epsilon, epsilon_w=4*epsilon,
-                    use_mkl=True,nthreads=4)
+                    use_mkl=True,nthreads=8)
 
 # non-dimensional numbers
 lamb = N/f0/m
@@ -105,6 +105,8 @@ cphi = np.linspace(0,3.,100)
 Ew = model.epsilon_w/model.muw/2
 PHI = np.sqrt(model.epsilon_w/model.muw)
 
+POWER = (Ew)**2/Tmu
+
 ax = fig.add_subplot(121,aspect=1)
 im1 = plt.contourf(model.x/Lf,model.y/Lf,model.q/Q,cv,\
                 cmin=-0.2,cmax=0.2,extend='both',cmap=cmocean.cm.curl)
@@ -136,6 +138,9 @@ time = model.diagnostics['time']['value']
 KE_qg = model.diagnostics['ke_qg']['value']
 KE_niw = model.diagnostics['ke_niw']['value']
 PE_niw = model.diagnostics['pe_niw']['value']
+
+dt = time[1]-time[0]
+dPE_niw = np.gradient(PE_niw,dt)
 
 ENS_qg = model.diagnostics['ens']['value']
 ep_psi = model.diagnostics['ep_psi']['value']
@@ -203,28 +208,34 @@ plt.ylabel(r"Wave action $[\mathcal{A} \,\, 2 \mu_w f_0 /\sigma_q^2]$")
 remove_axes(ax)
 plt.savefig('figs/energy_and_action_qg-niw_2' , pad_inces=0, bbox_inches='tight')
 
-# a quasi energy budget
+# a PE_niw energy budget
+residual = gamma_r+gamma_a+chi_phi+smallchi_phi-dPE_niw
+
 fig = plt.figure(figsize=(9.5,4.))
+ax = fig.add_subplot(111)
+plt.plot(time*model.mu,gamma_r/POWER,label=r'$\Gamma_r$')
+plt.plot(time*model.mu,gamma_a/POWER,label=r'$\Gamma_a$')
+#plt.plot(time*model.mu,xi_a,label=r'$\Xi_a$')
+#plt.plot(time*model.mu,xi_r,label=r'$\Xi_r$')
+plt.plot(time*model.mu,chi_phi/POWER,label=r'$-2\gamma\mathcal{P}$')
+plt.plot(time*model.mu,smallchi_phi/POWER,label=r'$\chi_\phi$')
+plt.plot(time*model.mu,dPE_niw/POWER,label=r'$d\mathcal{P}/dt$')
+plt.plot(time*model.mu,residual/POWER,label=r'residual')
+plt.ylim(-10,10)
+plt.legend(loc=3,ncol=2)
+plt.ylabel(r"Power [$\dot \mathcal{P} \,/\, W$]")
+plt.xlabel(r"$t\,\, \mu$")
+remove_axes(ax)
+plt.savefig('figs/PE_niw_budget' , pad_inces=0, bbox_inches='tight')
 
-ax = fig.add_subplot(121)
-plt.plot(time*model.mu,-gamma_r,label=r'$-\Gamma_r$')
-plt.plot(time*model.mu,-gamma_a,label=r'$-\Gamma_a$')
-plt.plot(time*model.mu,xi_a,label=r'$\Xi_a$')
-plt.plot(time*model.mu,xi_r,label=r'$\Xi_r$')
-plt.plot(time*model.mu,ep_psi,label=r'$\epsilon_\psi$')
-plt.plot(time*model.mu,smalldiss_psi,label=r'$\delta_\psi$')
-plt.ylim(-1e-8,1e-8)
-plt.legend()
-plt.ylabel("Power")
-
-ax = fig.add_subplot(122)
-plt.plot(time*model.mu,gamma_r,label=r'$\Gamma_r$')
-plt.plot(time*model.mu,gamma_a,label=r'$\Gamma_a$')
-plt.plot(time*model.mu,chi_phi,label=r'$\chi_\phi$')
-plt.plot(time*model.mu,smallchi_phi,label=r'$\delta_\phi$')
-plt.legend()
-plt.ylabel("Power")
-plt.savefig('figs/rough_budgets' , pad_inces=0, bbox_inches='tight')
+#ax = fig.add_subplot(122)
+#plt.plot(time*model.mu,gamma_r,label=r'$\Gamma_r$')
+#plt.plot(time*model.mu,gamma_a,label=r'$\Gamma_a$')
+#plt.plot(time*model.mu,chi_phi,label=r'$\chi_\phi$')
+#plt.plot(time*model.mu,smallchi_phi,label=r'$\delta_\phi$')
+#plt.legend()
+#plt.ylabel("Power")
+#plt.savefig('figs/rough_budgets' , pad_inces=0, bbox_inches='tight')
 
 # calculate spectrum
 E = 0.5 * np.abs(model.wv*model.ph)**2
