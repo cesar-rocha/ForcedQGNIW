@@ -32,7 +32,7 @@ Tmu = 200*86400
 mu = 1./Tmu
 
 dt = 0.00025*Tmu
-tmax = 5*Tmu
+tmax = 3*Tmu
 
 #forcing
 dk = 2*np.pi/L
@@ -48,7 +48,7 @@ path = "output/test_qg"
 
 # Force only dynamics
 qgmodel = CoupledModel.Model(L=L,nx=nx, tmax = tmax,dt = dt, twrite=20,
-                    nu4=0,mu=mu,nu4w=0,nu=0,nuw=0,muw=mu, use_filter=True,save_to_disk=True,
+                    nu4=1e10,mu=mu,nu4w=0,nu=0,nuw=0,muw=mu, use_filter=False,save_to_disk=True,
                     tsave_snapshots=25,path=path,
                     U = 0., tdiags=1,
                     f=f0,N=N,m=m,
@@ -86,7 +86,7 @@ plt.colorbar(orientation="horizontal",shrink=0.8,ticks=[-1,-.5,0,.5,1.],\
 plt.xlabel(r'$x\, k_f/2\pi$')
 plt.ylabel(r'$y\, k_f/2\pi$')
 
-plt.savefig('figs/forcing_qg-only')
+plt.savefig('figs/forcing_qg-only_test')
 
 # plot potential vorticity
 fig = plt.figure(figsize=(5.5,4))
@@ -98,7 +98,7 @@ plt.contourf(qgmodel.x/Lf,qgmodel.y/Lf,qgmodel.q/Q,cv,\
 plt.colorbar(ticks=[-.2,-.1,0,.1,.2],label=r'Potential vorticity $[q/Q]$')
 plt.xlabel(r'$x\, k_f/2\pi$')
 plt.ylabel(r'$y\, k_f/2\pi$')
-plt.savefig('figs/snapshots_pv_qg-only')
+plt.savefig('figs/snapshots_pv_qg-only_test')
 
 # diagnostics
 time = qgmodel.diagnostics['time']['value']
