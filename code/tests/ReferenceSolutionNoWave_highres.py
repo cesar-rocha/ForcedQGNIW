@@ -17,7 +17,7 @@ from pyspec import spectrum
 plt.close('all')
 
 # parameters
-nx = 128*4
+nx = 512
 
 f0 = 1.e-4
 N = 0.005
@@ -42,6 +42,7 @@ Lf = 2*np.pi/kf
 # energy input
 U0 = 0.5
 epsilon = (U0**2)*mu
+sigma = np.sqrt(epsilon)
 
 path = "output/reference512"
 
@@ -50,12 +51,13 @@ nu4w = 5.e8
 
 # Forced only dynamics
 model = CoupledModel.Model(L=L,nx=nx, tmax = tmax,dt = dt, twrite=200,
-                    nu4=nu4,mu=mu,nu4w=0*nu4w,nu=0,nuw=0,muw=0*mu, use_filter=False,save_to_disk=True,
+                    nu4=nu4,mu=mu,nu4w=0*nu4w,nu=0,nuw=0,muw=0*mu,
+                    use_filter=False,save_to_disk=True,
                     tsave_snapshots=100,path=path,
                     U = 0., tdiags=100,
                     f=f0,N=N,m=m,
                     wavenumber_forcing=kf,width_forcing=dkf,
-                    epsilon_q=epsilon, epsilon_w=0*epsilon,
+                    sigma_q=sigma, sigma_w=0.,
                     use_mkl=True,nthreads=8)
 
 # non-dimensional numbers
