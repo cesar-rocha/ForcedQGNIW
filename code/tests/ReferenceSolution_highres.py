@@ -250,4 +250,3 @@ _, Piphi = spectrum.calc_ispec(model.kk, model.ll, E)
 # dt = time[1]-time[0]
 # dKE = np.gradient(KE_qg,dt)
 # dKEw = np.gradient(KE_niw,dt)
-

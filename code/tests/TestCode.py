@@ -41,19 +41,20 @@ kf = 8*dk
 dkf = 1*dk
 
 # energy input
-U0 = 0.5
+U0 = 0.1
 epsilon = (U0**2)*mu
+sigma = np.sqrt(epsilon)
 
 path = "output/test_qg"
 
 # Force only dynamics
 qgmodel = CoupledModel.Model(L=L,nx=nx, tmax = tmax,dt = dt, twrite=20,
-                    nu4=1e10,mu=mu,nu4w=0,nu=0,nuw=0,muw=mu, use_filter=False,save_to_disk=True,
+                    nu4=0e10,mu=mu,nu4w=0,nu=0,nuw=0,muw=mu, use_filter=True,save_to_disk=True,
                     tsave_snapshots=25,path=path,
                     U = 0., tdiags=1,
                     f=f0,N=N,m=m,
                     wavenumber_forcing=kf,width_forcing=dkf,
-                    epsilon_q=epsilon, epsilon_w=0*epsilon )
+                    sigma_q=sigma, sigma_w=sigma )
 
 qgmodel.set_q(np.zeros([qgmodel.nx]*2))
 qgmodel.set_phi(np.zeros([qgmodel.nx]*2)+0j)
@@ -102,6 +103,7 @@ plt.savefig('figs/snapshots_pv_qg-only_test')
 
 # diagnostics
 time = qgmodel.diagnostics['time']['value']
+dt = time[1]-time[0]
 KE_qg = qgmodel.diagnostics['ke_qg']['value']
 KE_niw = qgmodel.diagnostics['ke_niw']['value']
 PE_niw = qgmodel.diagnostics['pe_niw']['value']
@@ -115,13 +117,15 @@ chi_q =  qgmodel.diagnostics['chi_q']['value']
 energy_input = qgmodel.diagnostics['energy_input']['value']
 wave_energy_input = qgmodel.diagnostics['wave_energy_input']['value']
 ep_phi = qgmodel.diagnostics['ep_phi']['value']
-
+work = qgmodel.diagnostics['Work_q']['value']
+work2 = np.cumsum(energy_input*dt)
 gamma_r = qgmodel.diagnostics['gamma_r']['value']
 gamma_a = qgmodel.diagnostics['gamma_a']['value']
 
 # plot energy
 fig = plt.figure(figsize=(8.5,4.))
-E = qgmodel.epsilon_q/qgmodel.mu/2
+epsilon_q = qgmodel.sigma_q**2
+E = epsilon_q/qgmodel.mu/2
 ax = fig.add_subplot(111)
 plt.plot(time*qgmodel.mu,KE_qg/E)
 plt.plot(time*qgmodel.mu,np.ones_like(time),'r--')
@@ -129,12 +133,28 @@ plt.xlabel(r"Time $[t\,\,\mu]$")
 plt.ylabel(r"Balanced kinetic energy $[\mathcal{K} \,\, 2 \mu/\sigma_q^2]$")
 plt.savefig('figs/kinetic_energy_qg-only')
 
-# a KE_niw energy budget
+
+def remove_axes(ax):
+    ax.spines['right'].set_visible(False)
+    ax.spines['top'].set_visible(False)
+    ax.yaxis.set_ticks_position('left')
+    ax.xaxis.set_ticks_position('bottom')
+
 dt = time[1]-time[0]
 dKE_qg = np.gradient(KE_qg,dt)
+# a KE_niw energy budget
 residual = -gamma_r-gamma_a+ep_psi+smalldiss_psi-dKE_qg+energy_input
-E = qgmodel.epsilon_q/qgmodel.mu/2
 POWER = (E)**2/Tmu
+
+
+fig = plt.figure(figsize=(9.5,4.))
+ax = fig.add_subplot(111)
+
+plt.plot(time*mu,work/time)
+plt.plot(time*mu,work2/time)
+plt.plot(time*mu,np.ones_like(time)*epsilon_q,'r--')
+plt.plot(time*mu,np.ones_like(time)*epsilon_q*2,'r--')
+
 
 fig = plt.figure(figsize=(9.5,4.))
 ax = fig.add_subplot(111)
@@ -142,9 +162,9 @@ ax = fig.add_subplot(111)
 #plt.plot(time*model.mu,-gamma_a/POWER,label=r'$\Gamma_a$')
 #plt.plot(time*model.mu,xi_a,label=r'$\Xi_a$')
 #plt.plot(time*model.mu,xi_r,label=r'$\Xi_r$')
-plt.plot(time*qgmodel.mu,np.ones_like(time)*qgmodel.epsilon_q/POWER,label=r'$\sigma_q^2$')
+plt.plot(time*qgmodel.mu,work/time/POWER,label=r'$\sigma_q^2$')
 #plt.plot(time*model.mu,energy_input/POWER,label=r'$-\langle \psi \xi_q \rangle$')
-plt.plot(time*qgmodel.mu,ep_psi/POWER,label=r'$-2\mu\mathcal{K}$')
+plt.plot(time*qgmodel.mu,-ep_psi/POWER,label=r'$-2\mu\mathcal{K}$')
 plt.plot(time*qgmodel.mu,smalldiss_psi/POWER,label=r'$\epsilon_\psi$')
 
 #plt.plot(time*model.mu,dKE_qg/POWER,label=r'$d\mathcal{K}/dt$')
@@ -154,14 +174,18 @@ plt.legend(loc=3,ncol=2)
 plt.ylabel(r"Power [$\dot \mathcal{K} \,/\, W$]")
 plt.xlabel(r"$t\,\, \mu$")
 remove_axes(ax)
-plt.savefig('figs/KE_qg_budget_test_qg-only' , pad_inces=0, bbox_inches='tight')
+plt.savefig('figs/KE_qg_budget_qg-only' , pad_inces=0, bbox_inches='tight')
 
-
+plt.figure()
+plt.plot(time*qgmodel.mu,energy_input/POWER)
+plt.plot(time*qgmodel.mu,np.ones_like(time)*qgmodel.epsilon_q/POWER,label=r'$\sigma_q^2$')
 
 # calculate spectrum
 # calculate spectrum
 E = 0.5 * np.abs(qgmodel.wv*qgmodel.ph)**2
-ki, Ei = spectrum.calc_ispec(qgmodel.kk, qgmodel.ll, E)
+ki, Er = spectrum.calc_ispec(qgmodel.kk, qgmodel.ll, E, ndim=2)
+
+
 
 
 # dt = time[1]-time[0]

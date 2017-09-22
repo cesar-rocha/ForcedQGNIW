@@ -32,7 +32,7 @@ Tmu = 200*86400
 mu = 1./Tmu
 
 dt = 0.00025*Tmu
-tmax = 5*Tmu
+tmax = 10*Tmu
 
 #forcing
 dk = 2*np.pi/L
@@ -43,6 +43,7 @@ dkf = 1*dk
 # energy input
 U0 = 0.5
 epsilon = (U0**2)*mu
+sigma = np.sqrt(epsilon)
 
 path = "output/test_qg"
 
@@ -53,7 +54,7 @@ wavemodel = CoupledModel.Model(L=L,nx=nx, tmax = tmax,dt = dt, twrite=20,
                     U = 0., tdiags=1,
                     f=f0,N=N,m=m,
                     wavenumber_forcing=kf,width_forcing=dkf,
-                    epsilon_q=0*epsilon, epsilon_w=epsilon )
+                    sigma_q = 0., sigma_w=sigma )
 
 wavemodel.set_q(np.zeros([wavemodel.nx]*2))
 wavemodel.set_phi(np.zeros([wavemodel.nx]*2)+0j)
@@ -62,7 +63,6 @@ wavemodel._invert()
 # run the model
 wavemodel.run()
 
-#
 # # plot spectrum and a realization of the forcing
 # fig = plt.figure(figsize=(8.5,4.5))
 # Q = (2*np.pi)**-2 * epsilon/(mu**2 / kf**2)
@@ -103,26 +103,37 @@ wavemodel.run()
 #
 # diagnostics
 time = wavemodel.diagnostics['time']['value']
+dt = time[1]-time[0]
 KE_qg = wavemodel.diagnostics['ke_qg']['value']
 KE_niw = wavemodel.diagnostics['ke_niw']['value']
 PE_niw = wavemodel.diagnostics['pe_niw']['value']
 
-ENS_qg = qgmodel.diagnostics['ens']['value']
-ep_psi = qgmodel.diagnostics['ep_psi']['value']
-smalldiss_psi = qgmodel.diagnostics['smalldiss_psi']['value']
+energy_input = wavemodel.diagnostics['wave_energy_input']['value']
+work = wavemodel.diagnostics['Work_w']['value']
+work2 = np.cumsum(energy_input*dt)
+#
+# ENS_qg = qgmodel.diagnostics['ens']['value']
+# ep_psi = qgmodel.diagnostics['ep_psi']['value']
+# smalldiss_psi = qgmodel.diagnostics['smalldiss_psi']['value']
+#
 
-chi_q =  qgmodel.diagnostics['chi_q']['value']
+# chi_q =  qgmodel.diagnostics['chi_q']['value']
+#
+# wave_energy_input = qgmodel.diagnostics['wave_energy_input']['value']
+# ep_phi = qgmodel.diagnostics['ep_phi']['value']
 
-energy_input = qgmodel.diagnostics['energy_input']['value']
-wave_energy_input = qgmodel.diagnostics['wave_energy_input']['value']
-ep_phi = qgmodel.diagnostics['ep_phi']['value']
+# work
+epsilon_w = (wavemodel.sigma_w**2)/2
 
-gamma_r = qgmodel.diagnostics['gamma_r']['value']
-gamma_a = qgmodel.diagnostics['gamma_a']['value']
+fig = plt.figure(figsize=(8.5,4.))
+ax = fig.add_subplot(111)
+plt.plot(time*wavemodel.muw,work/time)
+plt.plot(time*wavemodel.muw,work2/time)
+plt.plot(time*wavemodel.muw,epsilon_w*np.ones_like(time))
 
 # plot energy
 fig = plt.figure(figsize=(8.5,4.))
-E = wavemodel.epsilon_w/wavemodel.muw/2
+E = epsilon_w/wavemodel.muw/4
 ax = fig.add_subplot(111)
 plt.plot(time*wavemodel.muw,KE_niw/E)
 plt.plot(time*wavemodel.muw,np.ones_like(time),'r--')
