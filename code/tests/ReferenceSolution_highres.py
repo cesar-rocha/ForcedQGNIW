@@ -1,6 +1,7 @@
 """
     Forced-disspative QG: still testing.
 """
+
 import timeit
 
 import matplotlib.pyplot as plt
@@ -42,7 +43,7 @@ Lf = 2*np.pi/kf
 # energy input
 U0 = 0.5
 epsilon = (U0**2)*mu
-
+sigma = np.sqrt(epsilon)
 path = "output/reference512"
 
 nu4  = 1e8
@@ -50,20 +51,27 @@ nu4w = 4e8
 
 # Forced only dynamics
 model = CoupledModel.Model(L=L,nx=nx, tmax = tmax,dt = dt, twrite=200,
-                    nu4=nu4,mu=mu,nu4w=nu4w,nu=0,nuw=0,muw=4*mu, use_filter=False,save_to_disk=True,
+                    nu4=nu4,mu=mu,nu4w=nu4w,nu=0,nuw=0,muw=4*mu,
+                    use_filter=False,save_to_disk=True,
                     tsave_snapshots=100,path=path,
                     U = 0., tdiags=100,
                     f=f0,N=N,m=m,
                     wavenumber_forcing=kf,width_forcing=dkf,
-                    epsilon_q=epsilon, epsilon_w=4*epsilon,
+                    sigma_q=sigma, sigma_w=4*sigma,
                     use_mkl=True,nthreads=8)
+
+# The rate of work into the system
+epsilon_q = model.sigma**2
+epsilon_w = (model.sigma_w**2)/2
 
 # non-dimensional numbers
 lamb = N/f0/m
 eta = f0*(lamb**2)
-PSI = Lf*np.sqrt(model.epsilon_q)/np.sqrt(model.mu)
-PHI = np.sqrt(model.epsilon_w/model.muw)
+PSI = Lf*np.sqrt(epsilon_q)/np.sqrt(model.mu)
+PHI = np.sqrt(epsilon_w/model.muw)
 hslash = eta/PSI
+
+stop
 
 # initial conditions
 model.set_q(np.zeros([model.nx]*2))
