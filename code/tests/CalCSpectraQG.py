@@ -6,7 +6,7 @@ from pyspec import spectrum
 
 plt.close('all')
 
-pathi = "output/reference256/"
+pathi = "output/reference512/"
 
 setup = h5py.File(pathi+"setup.h5")
 k,l = setup['grid/k'][:], setup['grid/l'][:]
@@ -15,6 +15,7 @@ kf = 8*k[1]
 wv2 = ki**2 + li**2
 wv2i = 1./wv2
 wv2i[0,0] = 0
+
 wv = np.sqrt(wv2)
 files = glob.glob(pathi+"snapshots/"+"*.h5")[750:]
 
