@@ -32,7 +32,7 @@ Tmu = 200*86400
 mu = 1./Tmu
 
 dt = 0.00025*Tmu
-tmax = 10*Tmu
+tmax = 3*Tmu
 
 #forcing
 dk = 2*np.pi/L
@@ -45,16 +45,16 @@ U0 = 0.5
 epsilon = (U0**2)*mu
 sigma = np.sqrt(epsilon)
 
-path = "output/test_qg"
+path = "output/test_wave"
 
 # Force only dynamics
 wavemodel = CoupledModel.Model(L=L,nx=nx, tmax = tmax,dt = dt, twrite=20,
-                    nu4=0,mu=mu,nu4w=0,nu=0,nuw=0,muw=mu, use_filter=True,save_to_disk=True,
+                    nu4=0,mu=mu,nu4w=0,nu=0,nuw=0,muw=mu,tstorm=int(7*86400//dt), use_filter=True,save_to_disk=True,
                     tsave_snapshots=25,path=path,
                     U = 0., tdiags=1,
                     f=f0,N=N,m=m,
                     wavenumber_forcing=kf,width_forcing=dkf,
-                    sigma_q = 0., sigma_w=sigma )
+                    sigma_q = 0., sigma_w=.1 )
 
 wavemodel.set_q(np.zeros([wavemodel.nx]*2))
 wavemodel.set_phi(np.zeros([wavemodel.nx]*2)+0j)
@@ -108,9 +108,10 @@ KE_qg = wavemodel.diagnostics['ke_qg']['value']
 KE_niw = wavemodel.diagnostics['ke_niw']['value']
 PE_niw = wavemodel.diagnostics['pe_niw']['value']
 
-energy_input = wavemodel.diagnostics['wave_energy_input']['value']
+#energy_input = wavemodel.diagnostics['wave_energy_input']['value']
 work = wavemodel.diagnostics['Work_w']['value']
-work2 = np.cumsum(energy_input*dt)
+#work2 = np.cumsum(energy_input*dt)
+
 #
 # ENS_qg = qgmodel.diagnostics['ens']['value']
 # ep_psi = qgmodel.diagnostics['ep_psi']['value']
