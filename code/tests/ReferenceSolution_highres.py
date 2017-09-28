@@ -44,10 +44,15 @@ Lf = 2*np.pi/kf
 U0 = 0.5
 epsilon = (U0**2)*mu
 sigma = np.sqrt(epsilon)
+
+Action = 0.5*(U0**2)
+
 path = "output/reference512"
 
 nu4  = 0e8
 nu4w = 0e8
+
+stop
 
 # Forced only dynamics
 model = CoupledModel.Model(L=L,nx=nx, tmax = tmax,dt = dt, twrite=200,
@@ -228,6 +233,7 @@ plt.savefig('figs/PE_niw_budget2' , pad_inces=0, bbox_inches='tight')
 #plt.ylabel("Power")
 #plt.savefig('figs/rough_budgets' , pad_inces=0, bbox_inches='tight')
 
+
 # calculate spectrum
 E = 0.5 * np.abs(model.wv*model.ph)**2
 ki, Ei = spectrum.calc_ispec(model.kk, model.ll, E)
@@ -243,3 +249,22 @@ np.savez("spec_qgniq",k=ki,K=Ei,P=Piphi,A=Eiphi,kf=kf)
 # dt = time[1]-time[0]
 # dKE = np.gradient(KE_qg,dt)
 # dKEw = np.gradient(KE_niw,dt)
+
+# plot spectra
+spec_qg = np.load("spec_qg-only.npz")
+S = epsilon_q/model.mu/2/kf
+
+fig = plt.figure(figsize=(6.5,4.5))
+ax = fig.add_subplot(111)
+plt.loglog(ki/kf,spec_qg['K']/S,'k',linewidth=2,label=r'$\mathcal{K}$, waveless QG')
+plt.loglog(ki/kf,Ei/S,linewidth=2,label=r'$\mathcal{K}$, QG-NIW')
+#plt.loglog(ki/kf,Eiphi,linewidth=2,label=r'$\mathcal{A}$')
+#plt.loglog(ki/kf,Piphi,linewidth=2,label=r'$\mathcal{P}$')
+plt.ylim(1e-7,1e1)
+plt.legend(loc=3)
+remove_axes(ax)
+plt.xlabel(r"Wavenumber [$k/k_f$]")
+plt.ylabel(r"Balanced kinetic energy density [$\mathcal{K} 2 \mu k_f \epsilon_q^{-1}$]")
+plt.savefig('figs/spectral' , pad_inces=0, bbox_inches='tight')
+
+
