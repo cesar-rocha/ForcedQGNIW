@@ -234,6 +234,19 @@ plt.savefig('figs/PE_niw_budget2' , pad_inces=0, bbox_inches='tight')
 #plt.savefig('figs/rough_budgets' , pad_inces=0, bbox_inches='tight')
 
 
+# accumulated work
+fig = plt.figure(figsize=(9.5,4.))
+ax = fig.add_subplot(111)
+plt.plot(time*model.muw,work_phi*time,label=r'$\mathcal{K}$')
+plt.xlabel(r"Time $[t\,\,\gamma]$")
+plt.ylabel(r"Accumulated work ")
+remove_axes(ax)
+plt.savefig('figs/accumulated_work_storm' , pad_inces=0, bbox_inches='tight')
+
+
+np.savez("accumulated_work_constant.npz",time=time,work=work_phi*time)
+
+
 # calculate spectrum
 E = 0.5 * np.abs(model.wv*model.ph)**2
 ki, Ei = spectrum.calc_ispec(model.kk, model.ll, E)
