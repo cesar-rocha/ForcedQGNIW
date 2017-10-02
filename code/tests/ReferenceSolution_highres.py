@@ -1,6 +1,7 @@
 """
     Forced-disspative QG: still testing.
 """
+
 import timeit
 
 import matplotlib.pyplot as plt
@@ -23,7 +24,7 @@ f0 = 1.e-4
 N = 0.005
 L = 2*np.pi*200e3
 
-λz = 750
+λz = 1000
 m = 2*np.pi/λz
 
 # dissipation
@@ -42,28 +43,39 @@ Lf = 2*np.pi/kf
 # energy input
 U0 = 0.5
 epsilon = (U0**2)*mu
+sigma = np.sqrt(epsilon)
+
+Action = 0.5*(U0**2)
 
 path = "output/reference512"
 
-nu4  = 1e8
-nu4w = 4e8
+nu4  = 0e8
+nu4w = 0e8
 
 # Forced only dynamics
 model = CoupledModel.Model(L=L,nx=nx, tmax = tmax,dt = dt, twrite=200,
-                    nu4=nu4,mu=mu,nu4w=nu4w,nu=0,nuw=0,muw=4*mu, use_filter=False,save_to_disk=True,
+                    nu4=nu4,mu=mu,nu4w=nu4w,nu=0,nuw=0,muw=4*mu,
+                    use_filter=True,save_to_disk=True,
                     tsave_snapshots=100,path=path,
                     U = 0., tdiags=100,
                     f=f0,N=N,m=m,
                     wavenumber_forcing=kf,width_forcing=dkf,
-                    epsilon_q=epsilon, epsilon_w=4*epsilon,
+                    sigma_q=sigma, sigma_w=2*sigma,
                     use_mkl=True,nthreads=8)
+
+# The rate of work into the system
+epsilon_q = model.sigma_q**2
+epsilon_w = (model.sigma_w**2)/2
 
 # non-dimensional numbers
 lamb = N/f0/m
 eta = f0*(lamb**2)
-PSI = Lf*np.sqrt(model.epsilon_q)/np.sqrt(model.mu)
-PHI = np.sqrt(model.epsilon_w/model.muw)
+PSI = model.sigma_q/np.sqrt(model.mu)/kf
+PHI = np.sqrt(epsilon_w/model.muw)
 hslash = eta/PSI
+Ew = epsilon_w/model.muw/2
+PHI = np.sqrt(epsilon_w/model.muw)
+POWER = (Ew)**2/Tmu
 
 # initial conditions
 model.set_q(np.zeros([model.nx]*2))
@@ -73,40 +85,11 @@ model._invert()
 # run the model
 model.run()
 
-# # plot spectrum and a realization of the forcing
-# fig = plt.figure(figsize=(8.5,4.5))
+# plot snapshot of potential vorticity
 Q = (2*np.pi)**-2 * epsilon/(mu**2 / kf**2)
-#
-# ax = fig.add_subplot(121,aspect=1)
-# plt.contourf(np.fft.fftshift(model.k)/kf,np.fft.fftshift(model.l)/kf,\
-#                 1e3*np.fft.fftshift(model.spectrum_qg_forcing),40)
-# plt.xlim(-2.5,2.5)
-# plt.ylim(-2.5,2.5)
-# plt.xlabel(r"$k/k_f$")
-# plt.ylabel(r"$l/k_f$")
-# plt.colorbar(orientation="horizontal",ticks=[0,2,4,6,8],shrink=0.8,\
-#                 label=r"Power spectrum $[10^{-3}\,\, \mathcal{F}_{kl}]$")
-#
-# ax = fig.add_subplot(122,aspect=1)
-cf = np.linspace(-1,1,40)
-# plt.contourf(model.x/Lf,model.y/Lf,1e6*np.fft.ifft2(model.forceh)/np.sqrt(model.dt)/Q,\
-#                     cf,cmap=cmocean.cm.curl,extend='both')
-# plt.colorbar(orientation="horizontal",shrink=0.8,ticks=[-1,-.5,0,.5,1.],\
-#                 label=r"Realization of white-noise forcing [$10^{-6}\,\,\xi_q/Q$]")
-# plt.xlabel(r'$x\, k_f/2\pi$')
-# plt.ylabel(r'$y\, k_f/2\pi$')
-#
-# plt.savefig('figs/forcing_qg-only')
-
-# plot potential vorticity
 fig = plt.figure(figsize=(10.5,5))
 cv = np.linspace(-.2,.2,100)
 cphi = np.linspace(0,3.,100)
-Ew = model.epsilon_w/model.muw/2
-PHI = np.sqrt(model.epsilon_w/model.muw)
-
-POWER = (Ew)**2/Tmu
-
 ax = fig.add_subplot(121,aspect=1)
 im1 = plt.contourf(model.x/Lf,model.y/Lf,model.q/Q,cv,\
                 cmin=-0.2,cmax=0.2,extend='both',cmap=cmocean.cm.curl)
@@ -160,6 +143,9 @@ xi_r = model.diagnostics['xi_r']['value']
 xi_a = model.diagnostics['xi_a']['value']
 
 
+work_q = model.diagnostics['Work_q']['value']/time
+work_phi = model.diagnostics['Work_w']['value']/time
+
 def remove_axes(ax):
     ax.spines['right'].set_visible(False)
     ax.spines['top'].set_visible(False)
@@ -169,64 +155,72 @@ def remove_axes(ax):
 
 # plot energy
 fig = plt.figure(figsize=(9.5,4.))
-E = model.epsilon_q/model.mu/2
-Ew = model.epsilon_w/model.muw/2
+E = epsilon_q/model.mu/2
+Ew = epsilon_w/model.muw/2
 
 ax = fig.add_subplot(121)
-plt.plot(time*model.mu,KE_qg/E,label=r'$\mathcal{K}$')
-plt.plot(time*model.mu,PE_niw/E,label=r'$\mathcal{P}$')
+plt.plot(time*model.muw,KE_qg/E,label=r'$\mathcal{K}$')
+plt.plot(time*model.muw,PE_niw/E,label=r'$\mathcal{P}$')
 #plt.plot(time*model.mu,np.ones_like(time),'r--')
-plt.xlabel(r"Time $[t\,\,\mu]$")
-plt.ylabel(r"Energy $[\mathcal{K},\mathcal{P} \,\, 2 \mu/\sigma_q^2]$")
+plt.xlabel(r"Time $[t\,\,\gamma]$")
+plt.ylabel(r"Energy $[\mathcal{K},\mathcal{P} \,\, 2 \mu/\epsilon_q]$")
 plt.legend(loc=5)
 remove_axes(ax)
 plt.subplots_adjust(wspace=.35)
 ax = fig.add_subplot(122)
-plt.plot(time*model.mu,KE_niw/Ew,label=r'$\mathcal{P}$')
+plt.plot(time*model.muw,KE_niw/Ew,label=r'$\mathcal{P}$')
 #plt.plot(time*model.muw,np.ones_like(time),'r--')
-plt.xlabel(r"Time $[t\,\,\mu]$")
-plt.ylabel(r"Wave action $[\mathcal{A} \,\, 2 f_0 \mu_w/\sigma_w^2]$")
+plt.xlabel(r"Time $[t\,\,\gamma]$")
+plt.ylabel(r"Wave action $[\mathcal{A} \,\, 2 f_0 \mu_w/\epsilon]$")
 remove_axes(ax)
 plt.savefig('figs/energy_and_action_qg-niw' , pad_inces=0, bbox_inches='tight')
 
-# plot energy
 fig = plt.figure(figsize=(9.5,4.))
-ax = fig.add_subplot(121)
-plt.plot(time*model.mu,KE_qg/E,label=r'$\mathcal{K}$')
-plt.plot(time*model.mu,PE_niw/E,label=r'$\mathcal{P}$')
-#plt.plot(time*model.mu,np.ones_like(time),'r--')
-plt.xlabel(r"Time $[t\,\,\mu]$")
-plt.ylabel(r"Energy $[\mathcal{K},\mathcal{P} \,\, 2 \mu/\sigma_q^2]$")
-plt.legend(loc=5)
+ax = fig.add_subplot(111)
+plt.plot(time*model.muw,KE_qg/E,label=r'$\mathcal{K}$')
+plt.plot(time*model.muw,PE_niw/E,label=r'$\mathcal{P}$')
+plt.plot(time*model.muw,KE_niw/E,label=r'$f_0\mathcal{A}$')
+plt.xlabel(r"Time $[t\,\,\gamma]$")
+plt.ylabel(r"Energy $[\mathcal{E} \,\, 2 f_0 \mu/\epsilon_q]$")
 remove_axes(ax)
-plt.subplots_adjust(wspace=.35)
-ax = fig.add_subplot(122)
-plt.plot(time*model.mu,KE_niw/E,label=r'$\mathcal{P}$')
-#plt.plot(time*model.muw,np.ones_like(time),'r--')
-plt.xlabel(r"Time $[t\,\,\mu]$")
-plt.ylabel(r"Wave action $[\mathcal{A} \,\, 2 \mu_w f_0 /\sigma_q^2]$")
-remove_axes(ax)
-plt.savefig('figs/energy_and_action_qg-niw_2' , pad_inces=0, bbox_inches='tight')
+plt.savefig('figs/energy_qgniw' , pad_inces=0, bbox_inches='tight')
 
 # a PE_niw energy budget
 residual = gamma_r+gamma_a+chi_phi+smallchi_phi-dPE_niw
 
 fig = plt.figure(figsize=(9.5,4.))
 ax = fig.add_subplot(111)
-plt.plot(time*model.mu,gamma_r/POWER,label=r'$\Gamma_r$')
-plt.plot(time*model.mu,gamma_a/POWER,label=r'$\Gamma_a$')
+plt.plot(time*model.muw,gamma_r/POWER,label=r'$\Gamma_r$')
+plt.plot(time*model.muw,gamma_a/POWER,label=r'$\Gamma_a$')
 #plt.plot(time*model.mu,xi_a,label=r'$\Xi_a$')
 #plt.plot(time*model.mu,xi_r,label=r'$\Xi_r$')
-plt.plot(time*model.mu,chi_phi/POWER,label=r'$-2\gamma\mathcal{P}$')
-plt.plot(time*model.mu,smallchi_phi/POWER,label=r'$\chi_\phi$')
-plt.plot(time*model.mu,dPE_niw/POWER,label=r'$d\mathcal{P}/dt$')
-plt.plot(time*model.mu,residual/POWER,label=r'residual')
-plt.ylim(-10,10)
+plt.plot(time*model.muw,chi_phi/POWER,label=r'$-2\gamma\mathcal{P}$')
+#plt.plot(time*model.muw,smallchi_phi/POWER,label=r'$\chi_\phi$')
+#plt.plot(time*model.muw,dPE_niw/POWER,label=r'$d\mathcal{P}/dt$')
+#plt.plot(time*model.mu,residual/POWER,label=r'residual')
+plt.ylim(-65,65)
 plt.legend(loc=3,ncol=2)
 plt.ylabel(r"Power [$\dot \mathcal{P} \,/\, W$]")
-plt.xlabel(r"$t\,\, \mu$")
+plt.xlabel(r"$t\,\, \gamma$")
 remove_axes(ax)
 plt.savefig('figs/PE_niw_budget' , pad_inces=0, bbox_inches='tight')
+
+fig = plt.figure(figsize=(9.5,4.))
+ax = fig.add_subplot(111)
+plt.plot(time*model.muw,(gamma_r+gamma_a)/POWER,label=r'$\Gamma_r$')
+#plt.plot(time*model.muw,gamma_a/POWER,label=r'$\Gamma_a$')
+#plt.plot(time*model.mu,xi_a,label=r'$\Xi_a$')
+#plt.plot(time*model.mu,xi_r,label=r'$\Xi_r$')
+plt.plot(time*model.muw,-chi_phi/POWER,label=r'$2\gamma\mathcal{P}$')
+#plt.plot(time*model.muw,smallchi_phi/POWER,label=r'$\chi_\phi$')
+#plt.plot(time*model.muw,dPE_niw/POWER,label=r'$d\mathcal{P}/dt$')
+#plt.plot(time*model.mu,residual/POWER,label=r'residual')
+plt.ylim(-5,65)
+plt.legend(loc=2,ncol=2)
+plt.ylabel(r"Power [$\dot \mathcal{P} \,/\, W$]")
+plt.xlabel(r"$t\,\, \gamma$")
+remove_axes(ax)
+plt.savefig('figs/PE_niw_budget2' , pad_inces=0, bbox_inches='tight')
 
 #ax = fig.add_subplot(122)
 #plt.plot(time*model.mu,gamma_r,label=r'$\Gamma_r$')
@@ -236,6 +230,20 @@ plt.savefig('figs/PE_niw_budget' , pad_inces=0, bbox_inches='tight')
 #plt.legend()
 #plt.ylabel("Power")
 #plt.savefig('figs/rough_budgets' , pad_inces=0, bbox_inches='tight')
+
+
+# accumulated work
+fig = plt.figure(figsize=(9.5,4.))
+ax = fig.add_subplot(111)
+plt.plot(time*model.muw,work_phi*time,label=r'$\mathcal{K}$')
+plt.xlabel(r"Time $[t\,\,\gamma]$")
+plt.ylabel(r"Accumulated work ")
+remove_axes(ax)
+plt.savefig('figs/accumulated_work_storm' , pad_inces=0, bbox_inches='tight')
+
+
+np.savez("accumulated_work_constant.npz",time=time,work=work_phi*time)
+
 
 # calculate spectrum
 E = 0.5 * np.abs(model.wv*model.ph)**2
@@ -247,6 +255,27 @@ _, Eiphi = spectrum.calc_ispec(model.kk, model.ll, E)
 E = (lamb**2) * 0.4 * np.abs(model.wv*model.phih)**2
 _, Piphi = spectrum.calc_ispec(model.kk, model.ll, E)
 
+np.savez("spec_qgniq",k=ki,K=Ei,P=Piphi,A=Eiphi,kf=kf)
+
 # dt = time[1]-time[0]
 # dKE = np.gradient(KE_qg,dt)
 # dKEw = np.gradient(KE_niw,dt)
+
+# plot spectra
+spec_qg = np.load("spec_qg-only.npz")
+S = epsilon_q/model.mu/2/kf
+
+fig = plt.figure(figsize=(6.5,4.5))
+ax = fig.add_subplot(111)
+plt.loglog(ki/kf,spec_qg['K']/S,'k',linewidth=2,label=r'$\mathcal{K}$, waveless QG')
+plt.loglog(ki/kf,Ei/S,linewidth=2,label=r'$\mathcal{K}$, QG-NIW')
+#plt.loglog(ki/kf,Eiphi,linewidth=2,label=r'$\mathcal{A}$')
+#plt.loglog(ki/kf,Piphi,linewidth=2,label=r'$\mathcal{P}$')
+plt.ylim(1e-7,1e1)
+plt.legend(loc=3)
+remove_axes(ax)
+plt.xlabel(r"Wavenumber [$k/k_f$]")
+plt.ylabel(r"Balanced kinetic energy density [$\mathcal{K} 2 \mu k_f \epsilon_q^{-1}$]")
+plt.savefig('figs/spectral' , pad_inces=0, bbox_inches='tight')
+
+

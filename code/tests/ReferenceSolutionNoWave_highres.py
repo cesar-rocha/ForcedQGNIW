@@ -14,10 +14,12 @@ import cmocean
 
 from pyspec import spectrum
 
+from Utils import *
+
 plt.close('all')
 
 # parameters
-nx = 128*4
+nx = 512
 
 f0 = 1.e-4
 N = 0.005
@@ -30,8 +32,14 @@ m = 2*np.pi/λz
 Tmu = 200*86400
 mu = 1./Tmu
 
+Tgamma = 200*86400/4
+gamma = 1./Tgamma
+
 dt = 0.000125*Tmu/4
 tmax = 4*Tmu
+
+#dt = 0.000125*Tgamma
+#tmax = 12*Tgamma
 
 #forcing
 dk = 2*np.pi/L
@@ -42,26 +50,29 @@ Lf = 2*np.pi/kf
 # energy input
 U0 = 0.5
 epsilon = (U0**2)*mu
+sigma = np.sqrt(epsilon)
 
-path = "output/reference512"
+path = "output/reference512_filter"
 
-nu4  = 1e8
-nu4w = 5.e8
+nu4  = 0e8
+nu4w = 0.e8
 
 # Forced only dynamics
 model = CoupledModel.Model(L=L,nx=nx, tmax = tmax,dt = dt, twrite=200,
-                    nu4=nu4,mu=mu,nu4w=0*nu4w,nu=0,nuw=0,muw=0*mu, use_filter=False,save_to_disk=True,
+                    nu4=nu4,mu=mu,nu4w=0*nu4w,nu=0,nuw=0,muw=0*mu,
+                    use_filter=True,save_to_disk=True,
                     tsave_snapshots=100,path=path,
                     U = 0., tdiags=100,
                     f=f0,N=N,m=m,
                     wavenumber_forcing=kf,width_forcing=dkf,
-                    epsilon_q=epsilon, epsilon_w=0*epsilon,
+                    sigma_q=sigma, sigma_w=0.,
                     use_mkl=True,nthreads=8)
 
 # non-dimensional numbers
 lamb = N/f0/m
 eta = f0*(lamb**2)
-PSI = Lf*np.sqrt(model.epsilon_q)/np.sqrt(model.mu)
+epsilon_q = sigma**2
+PSI = sigma/np.sqrt(model.mu)/kf
 #PHI = np.sqrt(model.epsilon_w/mu)
 PHI = 1.
 hslash = eta/PSI
@@ -73,6 +84,9 @@ model._invert()
 
 # run the model
 model.run()
+
+# get snapshot of wave fields
+uw, vw, ww, pw ,bw = wave_fields(model.phi, model.f0, lamb**2, model.t, model.k, model.l, model.m, z=0)
 
 # # plot spectrum and a realization of the forcing
 Q = (2*np.pi)**-2 * epsilon/(mu**2 / kf**2)
@@ -89,9 +103,6 @@ plt.xlabel(r'$x\, k_f/2\pi$')
 plt.ylabel(r'$y\, k_f/2\pi$')
 
 plt.title(r"$t\,\,\mu = %3.2f$" % (model.t*model.mu))
-#plt.title(r'$t \times U_e k_e$= %3.2f' %(t))
-#figname = pathi+"figs2movie/"+fni[-18:-3]+".png"
-#cbaxes = fig.add_axes([0.15, 1., 0.3, 0.025])
 plt.colorbar(im1, ticks=[-.2,-.1,0,.1,.2],label=r'Potential vorticity $[q/Q]$')
 
 plt.savefig('figs/snapshots_pv_qg', pad_inces=0, bbox_inches='tight')
@@ -117,7 +128,8 @@ gamma_r = model.diagnostics['gamma_r']['value']
 gamma_a = model.diagnostics['gamma_a']['value']
 xi_r = model.diagnostics['xi_r']['value']
 xi_a = model.diagnostics['xi_a']['value']
-
+work = model.diagnostics['Work_q']['value']/time
+work[0] = 0
 
 def remove_axes(ax):
     ax.spines['right'].set_visible(False)
@@ -130,12 +142,12 @@ dKE_qg = np.gradient(KE_qg,dt)
 
 # plot energy
 fig = plt.figure(figsize=(8.5,4.))
-E = model.epsilon_q/model.mu/2
+E = epsilon_q/model.mu/2
 
 ax = fig.add_subplot(111)
-plt.plot(time*model.mu,np.ones_like(time),'r--')
-plt.plot(time*model.mu,KE_qg/E,label=r'$\mathcal{K}$')
-plt.xlabel(r"Time $[t\,\,\mu]$")
+plt.plot(time*model.mu*4,np.ones_like(time),'r--')
+plt.plot(time*model.mu*4,KE_qg/E,label=r'$\mathcal{K}$')
+plt.xlabel(r"Time $[t\,\,\gamma]$")
 plt.ylabel(r"Energy $[\mathcal{K} \,\, 2 \mu/\sigma_q^2]$")
 #plt.legend(loc=5)
 remove_axes(ax)
@@ -147,26 +159,33 @@ POWER = (E)**2/Tmu
 
 fig = plt.figure(figsize=(9.5,4.))
 ax = fig.add_subplot(111)
-#plt.plot(time*model.mu,-gamma_r/POWER,label=r'$\Gamma_r$')
-#plt.plot(time*model.mu,-gamma_a/POWER,label=r'$\Gamma_a$')
-#plt.plot(time*model.mu,xi_a,label=r'$\Xi_a$')
-#plt.plot(time*model.mu,xi_r,label=r'$\Xi_r$')
-plt.plot(time*model.mu,np.ones_like(time)*model.epsilon_q/POWER,label=r'$\sigma_q^2$')
-#plt.plot(time*model.mu,energy_input/POWER,label=r'$-\langle \psi \xi_q \rangle$')
+plt.plot(time*model.mu,np.ones_like(time)*epsilon_q/POWER,label=r'$\epsilon_q$')
+plt.plot(time*model.mu,np.ones_like(time)*work/POWER,label=r'$W/t$')
 plt.plot(time*model.mu,ep_psi/POWER,label=r'$-2\mu\mathcal{K}$')
-plt.plot(time*model.mu,smalldiss_psi/POWER,label=r'$\epsilon_\psi$')
-
-#plt.plot(time*model.mu,dKE_qg/POWER,label=r'$d\mathcal{K}/dt$')
-#plt.plot(time*model.mu,residual/POWER,label=r'residual')
-#plt.ylim(-10,10)
 plt.legend(loc=3,ncol=2)
 plt.ylabel(r"Power [$\dot \mathcal{K} \,/\, W$]")
 plt.xlabel(r"$t\,\, \mu$")
 remove_axes(ax)
-plt.savefig('figs/KE_qg_budget_qg-only' , pad_inces=0, bbox_inches='tight')
+plt.savefig('figs/KE_qg_budget' , pad_inces=0, bbox_inches='tight')
 
 # calculate spectrum
 E = 0.5 * np.abs(model.wv*model.ph)**2
 ki, Ei = spectrum.calc_ispec(model.kk, model.ll, E)
+np.savez("spec_qg-only",k=ki,K=Ei,kf=kf)
 
+# plot spectra
+spec_qg = np.load("spec_qg-only.npz")
+S = epsilon_q/model.mu/2/kf
 
+fig = plt.figure(figsize=(6.5,4.5))
+ax = fig.add_subplot(111)
+plt.loglog(ki/kf,spec_qg['K']/S,'k',linewidth=2,label=r'$\mathcal{K}$, waveless QG')
+plt.loglog(ki/kf,Ei/S,linewidth=2,label=r'$\mathcal{K}$, QG-NIW')
+#plt.loglog(ki/kf,Eiphi,linewidth=2,label=r'$\mathcal{A}$')
+#plt.loglog(ki/kf,Piphi,linewidth=2,label=r'$\mathcal{P}$')
+plt.ylim(1e-7,1e1)
+plt.legend(loc=3)
+remove_axes(ax)
+plt.xlabel(r"Wavenumber [$k/k_f$]")
+plt.ylabel(r"Balanced kinetic energy density [$\mathcal{K} 2 \mu k_f \epsilon_q^{-1}$]")
+plt.savefig('figs/spectral' , pad_inces=0, bbox_inches='tight')
