@@ -52,8 +52,6 @@ path = "output/reference512"
 nu4  = 0e8
 nu4w = 0e8
 
-stop
-
 # Forced only dynamics
 model = CoupledModel.Model(L=L,nx=nx, tmax = tmax,dt = dt, twrite=200,
                     nu4=nu4,mu=mu,nu4w=nu4w,nu=0,nuw=0,muw=4*mu,
