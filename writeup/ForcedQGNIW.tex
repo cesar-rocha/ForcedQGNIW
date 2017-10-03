@@ -1,0 +1,232 @@
+\documentclass[12pt]{article}
+\usepackage{fullpage}
+\usepackage{lineno}
+\usepackage[notcite,notref]{showkeys}
+\usepackage[notcite,notref]{showkeys}
+\usepackage{amssymb}
+\usepackage{amsmath}
+\usepackage{natbib}
+
+\usepackage{epsfig}
+\usepackage[mathscr]{eucal}
+
+
+
+\bibliographystyle{plain}
+
+%% For lucida bright
+%\usepackage[T1]{fontenc}
+%\usepackage{lucidabr}
+%\usepackage{bm}
+%%%
+
+
+
+
+\usepackage{color,amssymb,amsmath,amsthm}
+
+\usepackage{epsfig}
+\usepackage[mathscr]{eucal}
+
+
+\newcommand{\NIW}{near-inertial wave}
+\newcommand{\macrot}{macroturbulence}
+
+\include{symbols}
+
+%\renewcommand{\sZ}{\mathsf{Z}}
+%\renewcommand{\sE}{\mathsf{E}}
+%\newcommand{\iBu}{\left(\tfrac{f_0}{N}\right)^2}
+\newcommand{\F}{\mathcal{F}}
+\newcommand{\D}{\mathcal{D}}
+\newcommand{\phis}{\phi^\star}
+
+%\newcommand{\bk}{\boldsymbol{k}}
+
+\newcommand{\cg}{\mathbf{c}_g}
+\newcommand{\Uf}{\mathbf{U}}
+\renewcommand{\Im}{\mathrm{Im}}
+\renewcommand{\div}{\nabla\cdot}
+\renewcommand{\P}{\mathcal{P}}
+\newcommand{\dU}{\delta U}
+\newcommand{\W}{\mathcal{W}}
+\newcommand{\cK}{\mathcal{K}}
+\newcommand{\cP}{\mathcal{P}}
+\renewcommand{\L}{\mathsf{L}}
+\renewcommand{\N}{\mathsf{N}}
+\newcommand{\psiq}{\psi^q}
+\newcommand{\psiw}{\psi^w}
+%\newcommand{\tfrac}{\frac}
+%\newcommand{\eqref}{\ref}
+\newcommand{\kb}{\mathbf{k}}
+\newcommand{\xb}{\mathbf{x}}
+%wave PV
+\newcommand{\qw}{q^{\mathrm{w}}}
+\newcommand{\bw}{b^{\mathrm{w}}}
+\newcommand{\ug}{u^{\mathrm{g}}}
+\newcommand{\bug}{\bu^{\mathrm{g}}}
+
+%action and energy
+\newcommand{\A}{  \mathcal{A}}
+\newcommand{\E}{\mathcal{E}}
+\newcommand{\Pw}{\mathcal{P}}
+\newcommand{\Ke}{\mathcal{K}}
+\newcommand{\Ff}{ \boldsymbol{\mathcal{F}}}
+\newcommand{\Ffp}{\boldsymbol{\mathcal{F}}^{\perp}}
+\newcommand{\Hf}{\boldsymbol{\mathcal{H}}}
+\newcommand{\Gg}{\boldsymbol{\mathcal{G}}}
+\newcommand{\epA}{\varepsilon_\mathcal{A}}
+\newcommand{\epP}{\varepsilon_\mathcal{P}}
+\newcommand{\epK}{\varepsilon_\mathcal{K}}
+
+%dispersivity
+\newcommand{\disp}{\eta}
+
+%relative vorticity
+\newcommand{\ze}{\zeta}
+
+% index differentiation
+\newcommand{\gind}[2]{#1_{,#2}}
+
+% QG-NIW model (or XV model)
+\newcommand{\coupledmodel}{QG-NIW model}
+
+\begin{document}
+
+
+
+
+
+\title{Equilibration of barotropic turbulence by stimulated generation
+of near-inertial waves}
+
+\author{
+CR  \& WRY \thanks {Scripps Institution of Oceanography,
+University of California at San Diego, La Jolla, CA
+92093--0230, USA.
+%\protect\url{email:wryoung@ucsd.edu}.
+}
+}
+
+
+\maketitle
+
+\section{The model}
+The balanced dynamics satisfies
+\beq
+q_t + \sJ(\psi,q)  = \xi_q -\mu \zeta + \D_q \com
+\label{balanced_dynamics}
+\eeq
+where the quasigeostrophic potential vorticity is
+\beq
+\label{qgpv}
+q = \underbrace{\lap \psi}_{\defn \zeta} +
+                \underbrace{\tfrac{1}{f_0}\Big[ \tfrac{1}{4} \lap |\phi|^2 + \tfrac{\ii}{2}
+                \sJ(\phi^\star,\phi)\Big]}_{\defn q^w}\per
+\eeq
+The back-rotated near-inertial velocity $\phi$ satisfies the
+YBJ equation
+\beq
+\phi_t + \sJ(\psi,\phi) +  \phi \tfrac{\ii}{2}\ze - \tfrac{\ii}{2} \disp \lap \phi
+ = \xi_\phi -\gamma \phi + \D_\phi\per
+ \label{ybj_dynamics}
+\eeq
+
+In \eqref{balanced_dynamics}, $\mu$ is the linear drag, $\xi_q$ is a white-noise forcing
+with random horizontal structure with a ring-like isotropic spectrum peaking at $|\mathbf{k}_f|$
+and variance $\sigma^2_q$.
+In \eqref{ybj_dynamics}, $\xi_\phi$ is a white-noise spatially uniform forcing with
+variance $\sigma^2_\phi$, and $\gamma$
+is a linear damping. In \eqref{balanced_dynamics} and \eqref{ybj_dynamics}, the $\D$ terms represent
+small-scale dissipation.
+
+\subsection{Power integrals}
+
+The balanced kinetic energy equation is
+\beq
+\frac{\dd}{\dd t} \underbrace{\half \la |\nabla \psi|^2 \ra}_{\defn \K} = -\la\Gamma_r + \Gamma_a\ra + \Xi +
+ -\la \psi \xi_q \ra -\ \mu \la|\nabla\psi|^2\ra - \la\psi\D_q\ra\com
+\label{Ke}
+\eeq
+where $\Gamma_r$ and $\Gamma_a$ are energy conversion terms and $\Xi$ is a source of balanced kinetic energy
+due to wave dissipation (cf. RWY); $\la \ra$ represents spatial average.
+If the were no waves, i.e., $\phi(t=0)=0$ and $\sigma_\phi^2=0$,  then $\Gamma_r=\Gamma_a = 0$, and the expectation of the work due to the white-noise forcing
+is $-\la\psi\xi_q\ra = \sigma_q^2$. Ignoring small-scale dissipation, the expectation of equilibrated energy level
+is $\K = \sigma_q^2/2\mu$.
+
+The wave action equation is
+\beq
+\frac{\dd}{\dd t} \underbrace{\tfrac{1}{2 f_0} \la |\phi|^2 \ra}_{\defn \A} = \tfrac{1}{2f_0}\la \phis \xi_\phi +
+\phi \xi_\phis \ra -\tfrac{1}{f_0}\gamma \la |\phi|^2 \ra + \tfrac{1}{2f_0} \la \phis\D_\phi + \phi\D_\phis \ra\per
+\label{A}
+\eeq
+The expectation of the work due to the white-noise forcing is $ \tfrac{1}{2}\la \phis \xi_\phi+\phi \xi_\phis \ra = \sigma_\phi^2\com$
+and the expectation of the equilibrated action is $\A = \sigma_\phi^2/2f_0\gamma$.
+
+The potential energy equation  is
+
+\beq
+\frac{\dd}{\dd t} \underbrace{\tfrac{\lambda^2}{4} \la |\nabla\phi|^2 \ra}_{\defn \P} = \Gamma_r + \Gamma_a
+ -\tfrac{\lambda^2}{2}\gamma \la |\nabla\phi|^2 \ra - \tfrac{\lambda^2}{2} \la \lap\phis\D_\phi + \lap\phi\D_\phis \ra\per
+\label{P}
+\eeq
+
+\section{A reference solution}
+Figure \ref{snapshots_pv_qg-niw_reference} shows snapshots of potential vorticity and wave
+action density for a solution with $\sigma_w^2 = 2\sigma_q^2$ and $\gamma = 4\mu$; table
+\ref{parameters_reference} describes in detail the parameters of
+this reference solution. The equilibrated potential vorticity in figure
+\ref{snapshots_pv_qg-niw_reference}a  resembles the vorticity field
+of waveless two-dimensional turbulence with its ubiquitous eddies, filaments,
+and coherent structures. A main difference is that the the potential vorticity
+of this wave-modified turbulence is more fine-grained (see spectrum?).
+
+\begin{table}
+ \begin{center}
+   \caption{Details of the reference solution.}
+   \label{parameters_reference}
+   \begin{tabular}{ l | l | l }
+     \hline
+      Parameter & Description & Value \\
+      \hline
+      $\mathsf{N}$   & Number of modes &  512  \\
+      $L_d$ & Domain size & $2\pi\times 200$ km \\
+      $\sigma_q^2$ & Balanced-forcing variance & $1.45\,\,10^{-8}$ m$^2$ s$^{-3}$ \\
+      $\sigma_w^2$ & Wave-forcing variance & $5.78\,\,10^{-8}$ m$^2$ s$^{-3}$ \\
+      $k_f L_d/2\pi$    & Balanced-forcing wavenumber & 8 \\
+      ${dk}_f L_d/2\pi$    & Balanced-forcing width &  1 \\
+      $\mu$ & Linear bottom drag coefficient & $5.78\,\,10^{-8}$ s$^{-1}$ \\
+      $\gamma$ & Linear wave damping coefficient & $2.31\,\,10^{-7}$ s$^{-1}$ \\
+      $N$ & Buoyancy frequency &  $5\,\,10^{-3}$ s$^{-1}$\\
+      $f_0$ & Coriolis frequency &  $1\,\,10^{-4}$ s$^{-1}$\\
+      $\D_\phi$ & Exponential spectral filter & ---\\
+      $\D_q$ & Exponential spectral filter & ---\\
+   \end{tabular}
+ \end{center}
+\end{table}
+
+
+
+\begin{figure}
+\centering
+\includegraphics[width=.925\textwidth]{figs/snapshots_pv_qg-niw_reference.png}
+\caption{Snapshot of potential vorticity and wave action density from the solution
+         with parameters in  table \ref{parameters_reference}. The scale of potential vorticity
+         is $Q = \sigma_q/\mu^{1/2} $ and the scale of wave action density is
+         $A = \sigma_w^2/f_0 \gamma$.}
+        \label{snapshots_pv_qg-niw_reference}
+\end{figure}
+
+\begin{figure}
+\centering
+\includegraphics[width=.825\textwidth]{figs/energies_reference.png}
+\caption{(a) Balanced kinetic energy ($\K$) and wave potential energy ($\P$) and wave
+         kinetic energy ($f_0 \A$)  from the solution with parameters in table
+         \ref{parameters_reference}. The energy difference, $\Delta \K$ and $\Delta \P$,
+         about a time average after equilibration ($t\,\gamma \ge 5$).}
+        \label{energies_reference}
+\end{figure}
+
+
+
+\end{document}
