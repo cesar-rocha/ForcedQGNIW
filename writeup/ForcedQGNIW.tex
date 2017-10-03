@@ -172,14 +172,6 @@ The potential energy equation  is
 \eeq
 
 \section{A reference solution}
-Figure \ref{snapshots_pv_qg-niw_reference} shows snapshots of potential vorticity and wave
-action density for a solution with $\sigma_w^2 = 2\sigma_q^2$ and $\gamma = 4\mu$; table
-\ref{parameters_reference} describes in detail the parameters of
-this reference solution. The equilibrated potential vorticity in figure
-\ref{snapshots_pv_qg-niw_reference}a  resembles the vorticity field
-of waveless two-dimensional turbulence with its ubiquitous eddies, filaments,
-and coherent structures. A main difference is that the the potential vorticity
-of this wave-modified turbulence is more fine-grained (see spectrum?).
 
 \begin{table}
  \begin{center}
@@ -205,28 +197,53 @@ of this wave-modified turbulence is more fine-grained (see spectrum?).
  \end{center}
 \end{table}
 
-
-
 \begin{figure}
 \centering
 \includegraphics[width=.925\textwidth]{figs/snapshots_pv_qg-niw_reference.png}
-\caption{Snapshot of potential vorticity and wave action density from the solution
+\caption{Snapshot of potential vorticity and wave action density for the solution
          with parameters in  table \ref{parameters_reference}. The scale of potential vorticity
          is $Q = \sigma_q/\mu^{1/2} $ and the scale of wave action density is
          $A = \sigma_w^2/f_0 \gamma$.}
         \label{snapshots_pv_qg-niw_reference}
 \end{figure}
 
+Figure \ref{snapshots_pv_qg-niw_reference} shows snapshots of potential vorticity and wave
+action density for a solution with $\sigma_w^2 = 2\sigma_q^2$ and $\gamma = 4\mu$; table
+\ref{parameters_reference} describes in detail the parameters of
+this reference solution. The equilibrated potential vorticity in figure
+\ref{snapshots_pv_qg-niw_reference}a  resembles the vorticity field
+of waveless two-dimensional turbulence with its ubiquitous eddies, filaments,
+and coherent structures. A main difference is that the the potential vorticity
+of this wave-modified turbulence is more fine-grained (see spectrum?).
+
+The snapshot of wave action density depicts the incoherent nature of the equilibrated
+wave field, which is being scrambled by the turbulent balanced field
+(figure \ref{snapshots_pv_qg-niw_reference}b). The wave field develops scales smaller
+than the balanced eddies due to straining by the flow and wave interference.
+This snapshot resembles the wave field in decaying wave-modified
+two-dimensional turbulence (RWY).
+
+
 \begin{figure}
 \centering
 \includegraphics[width=.825\textwidth]{figs/energies_reference.png}
 \caption{(a) Balanced kinetic energy ($\K$) and wave potential energy ($\P$) and wave
-         kinetic energy ($f_0 \A$)  from the solution with parameters in table
+         kinetic energy ($f_0 \A$)  for the solution with parameters in table
          \ref{parameters_reference}. The energy difference, $\Delta \K$ and $\Delta \P$,
          about a time average after equilibration ($t\,\gamma \ge 5$).}
         \label{energies_reference}
 \end{figure}
 
+\begin{figure}
+\centering
+\includegraphics[width=.825\textwidth]{figs/K_and_P_and_A_budget_reference.png}
+\caption{The budget of (a) balanced kinetic energy ($\K$), wave potential energy ($\P$),
+        and (c) wave
+         kinetic energy ($f_0 \A$)  for the solution with parameters in table
+         \ref{parameters_reference}. The power is scaled by the work due to the
+         wave forcing $W=\sigma_w^2/2$.}
+        \label{energies_reference}
+\end{figure}
 
 
 \end{document}
