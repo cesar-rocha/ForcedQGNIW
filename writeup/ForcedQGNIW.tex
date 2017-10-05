@@ -97,6 +97,8 @@
 
 % math
 \newcommand{\p}{\partial}
+\newcommand{\bcdot}{\hspace{-0.1em} \boldsymbol{\cdot} \hspace{-0.12em}}
+\newcommand{\bnabla}{\boldsymbol{\nabla}}
 
 \begin{document}
 
@@ -119,6 +121,7 @@ University of California at San Diego, La Jolla, CA
 \maketitle
 
 \section{The model}
+
 In the vertical plane-wave model, waves affect the balanced
 flow via rectification terms in the quasi-geostrophic potential vorticity $q$:
 \beq
@@ -136,13 +139,12 @@ u + \ii v =  \phi \ee^{\ii\varpi}-\psi_y + \ii \psi_x\com
 where $\varpi \defn m z -f_0 t$ is the phase of the near-inertial wave.
 
 %\newcommand{\F}{\mathcal{F}}
-
-The balanced dynamics satisfies the potential vorticity equation
+The balanced dynamics satisfy the potential vorticity equation
 \beq
 q_t + \sJ(\psi,q)  = \F_q -\mu \zeta + \D_q \com
 \label{balanced_dynamics}
 \eeq
-where $\F_q(x,y,t)$ is a forcing, $\mu$ is the linear bottom drag. $\F_q$ is a
+where $\mu$ is the linear bottom drag. And $\F_q$ is a
 stochastic forcing that renovates every $\tau$,
 \renewcommand{\Hf}{\mathcal{H}}
 \beq
@@ -153,19 +155,19 @@ where $\xi_q$ is a normally-distributed random field with annular horizontal wav
 centered at $k_f$:
 \beq
 \label{spec_forcing}
-\Es(\hat{\F_q^\star}\hat{\F_q}) =  A \exp\big\{{-[(k^2+l^2)^{1/2}-k_f]^2/2\Delta_f^2}\big\}\com
+\Es(\hat{\xi_q^\star}\hat{\xi_q}) =  A \exp\big\{{-[(k^2+l^2)^{1/2}-k_f]^2/2\Delta_f^2}\big\}\com
 \eeq
-where $\Delta_f$ is the width of the spectrum and $\hat{\F_q}$ is the Fourier transform of $\F$:
+where $\Delta_f$ is the width of the spectrum and $\hat{\xi_q}$ is the Fourier transform of $\xi_q$:
 \beq
-\hat{\F_q}(k,l) = \frac{1}{(2\pi)^2}\iint \F_q(x,y)\ee^{\ii(kx + ly)}\dd k \dd l\per
+\hat{\xi_q}(k,l) = \frac{1}{(2\pi)^2}\iint \xi_q(x,y)\ee^{\ii(kx + ly)}\dd k \dd l\per
 \eeq
 The normalization condition,
 \beq
 \label{norm_fq}
-\frac{1}{(2\pi)^2}\iint\half(k^2 + l^2)\Es(\hat{\Ff_q^\star}\hat{\Ff_q}) \dd k \dd l=1\com
+\frac{1}{(2\pi)^2}\iint\half(k^2 + l^2)\Es(\hat{\xi_q^\star}\hat{\xi_q}) \dd k \dd l=1\com
 \eeq
 determines the constant A. In the waveless case, this normalization ensures that
-the expectation of the energy input equals the variance of the forcing $\sigma_q^2$
+the expectation of the energy input equals the variance of the forcing $\sigma_q^2$:
 \beq
 \Es[\xi_q(n)\xi_q(m)]= \sigma_q^2 \tau \delta_{mn}\,;
 \eeq
@@ -176,61 +178,129 @@ The vertical plane-wave model is completed by the YBJ equation for the evolution
 of the back-rotated near-inertial velocity $\phi$:
 \beq
 \phi_t + \sJ(\psi,\phi) +  \phi \tfrac{\ii}{2}\ze - \tfrac{\ii}{2} \disp \lap \phi
- = \xi_\phi -\gamma \phi + \D_\phi\per
+ = \F_\phi -\gamma \phi + \D_\phi\com
  \label{ybj_dynamics}
 \eeq
-
-In \eqref{ybj_dynamics}  $\gamma$
+$\eta = f_0\lambda^2$ is the wave dispersivity and  $\gamma$
 is a linear damping coefficient, which is related to the vertical viscosity
 that damps the near-inertial velocity:
 \beq
 \nu \p_z^2(\phi \ee^{\ii \varpi}) = - \underbrace{m^2\nu}_{\defn \gamma}\phi\com
 \eeq
-where $\varpi = mz - f_0 t$.
+where $\varpi = mz - f_0 t$. Vertical viscosity parameterizes
+all processes---including wave-wave interactions---that were neglected by the
+asymptotic derivation of \eqref{ybj_dynamics}.
 
 Also in \eqref{ybj_dynamics}, $\F_\phi(t)$ is a stochastic forcing that renovates
 every $\tau$ with variance $\Es(\F_\phis\F_\phi) = \sigma_\phi^2$; $\F_\phi$ has
 no spatial structure. The advantage of forcing the waves with this type of stochastic
-forcing is the a priori knowledge of the energy input. Experimenting with constant
-and shot-noise yields  qualitatively similar results to the solutions forced by
-white-noise.
+forcing is that the rate of energy input by the forcing is predicted. We experimented
+with constant and shot-noise forcings. The results from these experiments are
+ qualitatively similar results to the solutions forced by white-noise.
 
-In \eqref{balanced_dynamics} and \eqref{ybj_dynamics}, the $\D_q$ and $\D_phi$ represent
+In \eqref{balanced_dynamics} and \eqref{ybj_dynamics}, $\D_q$ and $\D_{\phi}$ represent
 small-scale horizontal dissipation, which are necessary for numerical stability.
-In the solution described bellow, small-scale horizontal dissipation contributes
+In practice, we use an exponential spectral filter, which selectively damps aliased
+wavenumbers. In the solution described bellow, small-scale horizontal dissipation contributes
 insignificant sinks to the energy budgets.
 
+% Talk about forcing as an approximation to white-noise.
 
 \subsection{Power integrals}
-
-The balanced kinetic energy equation is
-\beq
-\frac{\dd}{\dd t} \underbrace{\half \la |\nabla \psi|^2 \ra}_{\defn \K} = -\la\Gamma_r + \Gamma_a\ra + \Xi +
- -\la \psi \xi_q \ra -\ \mu \la|\nabla\psi|^2\ra - \la\psi\D_q\ra\com
-\label{Ke}
-\eeq
-where $\Gamma_r$ and $\Gamma_a$ are energy conversion terms and $\Xi$ is a source of balanced kinetic energy
-due to wave dissipation (cf. RWY); $\la \ra$ represents spatial average.
-If the were no waves, i.e., $\phi(t=0)=0$ and $\sigma_\phi^2=0$,  then $\Gamma_r=\Gamma_a = 0$, and the expectation of the work due to the white-noise forcing
-is $\E-\la\psi\xi_q\ra = \sigma_q^2$. Ignoring small-scale dissipation, the expectation of equilibrated energy level
-is $\K = \sigma_q^2/2\mu$.
 
 The wave action equation is
 \beq
 \frac{\dd}{\dd t} \underbrace{\tfrac{1}{2 f_0} \la |\phi|^2 \ra}_{\defn \A} = \tfrac{1}{2f_0}\la \phis \xi_\phi +
-\phi \xi_\phis \ra -\tfrac{1}{f_0}\gamma \la |\phi|^2 \ra + \tfrac{1}{2f_0} \la \phis\D_\phi + \phi\D_\phis \ra\per
+\phi \xi_\phis \ra -\tfrac{1}{f_0}\gamma \la |\phi|^2 \ra + \tfrac{1}{2f_0} \la \phis\D_\phi + \phi\D_\phis \ra\com
 \label{A}
 \eeq
-The expectation of the work due to the white-noise forcing is $ \tfrac{1}{2}\la \phis \xi_\phi+\phi \xi_\phis \ra = \sigma_\phi^2\com$
-and the expectation of the equilibrated action is $\A = \sigma_\phi^2/2f_0\gamma$.
+where $\la\,\ra$ represents spatial average. In the white-noise limit, the expectation for
+the work due the wave forcing is
+\beq
+\Es\Big(\tfrac{1}{2}\la \phis \xi_\phi+\phi \xi_\phis \ra\Big) = \half\sigma_\phi^2\per
+\eeq
+And we obtain a prediction for the equilibrated wave action:
+\beq
+\label{prediced_A}
+\Es(\A) = \frac{\sigma_\phi^2}{2\gamma}\com
+\eeq
+provided that small-scale dissipation $\tfrac{1}{2f_0}\la\phis\D_\phi+\phi\D_\phis\ra$
+is insiginificant.
 
-The potential energy equation  is
+The balanced kinetic energy equation is
+\beq
+\frac{\dd}{\dd t} \underbrace{\half \la |\nabla \psi|^2 \ra}_{\defn \K} = -(\Gamma_r + \Gamma_a) + \Xi
+ -\la \psi \F_q \ra -\ \mu \la|\nabla\psi|^2\ra - \la\psi\D_q\ra\com
+\label{Ke}
+\eeq
+where $\Gamma_r$ and
+$\Gamma_a$ are energy conversion terms,
+\begin{align}
+\Gamma_r &\defn  \Big\la\half\ze \, \diver\Ff \Big\ra\com \label{convr}
+\end{align}
+where the wave action flux is
+\beq
+\label{Fw2}
+\Ff \defn \tfrac{\ii}{4}\lambda^2 \left(\phi\grad\phis-\phis\grad\phi\right);
+\eeq
+and
+\beq
+ \Gamma_a \defn -\tfrac{\lambda^2}{2}
+   \left\la
+   \begin{bmatrix}
+   \phi_x^\star & \phi_y^\star
+   \end{bmatrix}
+   \begin{bmatrix}
+   -\psi_{xy} & \half(\psi_{xx} - \psi_{yy})\\
+   \half(\psi_{xx}-\psi_{yy}) & \psi_{xy}
+\end{bmatrix}
+ \begin{bmatrix}
+   \phi_x \\  \phi_y
+   \end{bmatrix}\right\ra\per
+   \label{conva}
+\eeq
+ Also in \eqref{Ke}, $\Xi$ is a source of balanced kinetic energy
+due to wave dissipation:
+\beq
+\label{Xi}
+\Xi = -\gamma\left[\left\la\A \half\zeta\right\ra +
+        \eta^{-1}\la\mathbf{u}_g\bcdot\Ff\ra\right]
+    + \half f_0^{-1}\left[\left\la (\phis\D_\phi+\phi\D_\phis)\half\zeta\right\ra\right]
+      + \mathbf{u}_q\bcdot\halfi (\D_\phi\grad\phis-\D_\phis\grad\phi)\com
+\eeq
+where $\mathbf{u}_g = \hat{\mathbf{z}}\cross\grad\psi$ is the geostrophic velocity.
+The first two terms in \eqref{Xi} stem from linear dissipation of $\phi$. The first
+terms shows that the dissipation of wave action in anticylones is a source of balanced
+kinetic energy. The second term shows that the anti-alignment of the geostrophic velocity
+with the wave action density flux is also a source of balanced kinetic energy. The
+remanining two terms stem from small-scale dissipation.
+See RWY for a derivation of $\Gamma_r$, $\Gamma_a$, and $\Xi$.
 
+In the waveless case, $\phi(t=0)=0$ and $\F_\phi=0$,  which implies that
+$\Gamma_r=\Gamma_a = \Xi = 0$. In the white-noise limit, the waveless expectation for
+the work delivered by the forcing is
+\beq
+\Es\big(-\la\psi\xi_q\ra\big) = \sigma_q^2\per
+\eeq
+Thus, we obtain a prediction for the equilibrated balanced kinetic energy:
+\beq
+\label{predicted_K}
+\Es(\K )= \frac{\sigma_q^2}{\mu}\com
+\eeq
+provided that small-scale dissipation $-\la\psi\D_q\ra$ is insignificant.
+
+Finally, the potential energy equation  is
 \beq
 \frac{\dd}{\dd t} \underbrace{\tfrac{\lambda^2}{4} \la |\nabla\phi|^2 \ra}_{\defn \P} = \Gamma_r + \Gamma_a
  -\tfrac{\lambda^2}{2}\gamma \la |\nabla\phi|^2 \ra - \tfrac{\lambda^2}{2} \la \lap\phis\D_\phi + \lap\phi\D_\phis \ra\per
 \label{P}
 \eeq
+Note that there's no external generation of wave potential energy $\P$ because the
+stochastic forcing has no spatial scale. $\P$ is only created by stimulated generation represented
+by the conversion terms $\Gamma_r$ and $\Gamma_a$. In statistical steady state, the
+wave potential energy created by stimilated generation dissipates via $-2\gamma\P$,
+ provided there's insignificant small-scale dissipation. But this isn't a prediction
+ for $\P$ since $\Gamma_a$ and $\Gamma_r$ are functions of $\phi$.
 
 \section{A reference solution}
 
