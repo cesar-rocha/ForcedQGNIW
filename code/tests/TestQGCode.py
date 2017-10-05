@@ -98,6 +98,8 @@ plt.xlabel(r"Time $[t\,\,\mu]$")
 plt.ylabel(r"Balanced kinetic energy $[\mathcal{K} \,\, 2 \mu/\sigma_q^2]$")
 plt.savefig('figs/kinetic_energy_qg-only')
 
+
+
 def remove_axes(ax):
     ax.spines['right'].set_visible(False)
     ax.spines['top'].set_visible(False)
