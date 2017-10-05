@@ -67,6 +67,7 @@
 \newcommand{\bug}{\bu^{\mathrm{g}}}
 
 %action and energy
+\newcommand{\Ewn}{E}
 \newcommand{\A}{  \mathcal{A}}
 \newcommand{\E}{\mathcal{E}}
 \newcommand{\Pw}{\mathcal{P}}
@@ -92,7 +93,10 @@
 \newcommand{\coupledmodel}{QG-NIW model}
 
 % expectation
-\newcommand{\Ep}{\mathbb{E}}
+\newcommand{\Es}{\mathbb{E}}
+
+% math
+\newcommand{\p}{\partial}
 
 \begin{document}
 
@@ -115,33 +119,87 @@ University of California at San Diego, La Jolla, CA
 \maketitle
 
 \section{The model}
-The balanced dynamics satisfies
-\beq
-q_t + \sJ(\psi,q)  = \xi_q -\mu \zeta + \D_q \com
-\label{balanced_dynamics}
-\eeq
-where the quasigeostrophic potential vorticity is
+In the vertical plane-wave model, waves affect the balanced
+flow via rectification terms in the quasi-geostrophic potential vorticity $q$:
 \beq
 \label{qgpv}
 q = \underbrace{\lap \psi}_{\defn \zeta} +
                 \underbrace{\tfrac{1}{f_0}\Big[ \tfrac{1}{4} \lap |\phi|^2 + \tfrac{\ii}{2}
-                \sJ(\phi^\star,\phi)\Big]}_{\defn q^w}\per
+                \sJ(\phi^\star,\phi)\Big]}_{\defn q^w}\com
 \eeq
-The back-rotated near-inertial velocity $\phi$ satisfies the
-YBJ equation
+where $\psi(x,y,t)$ is the wave-averaged streamfunction and $\phi(x,y,t)$ is the near-inertial
+back-rotated velocity of a vertical plane wave with wavenumber m; the total velocity is
+\beq
+\label{phi}
+u + \ii v =  \phi \ee^{\ii\varpi}-\psi_y + \ii \psi_x\com
+\eeq
+where $\varpi \defn m z -f_0 t$ is the phase of the near-inertial wave.
+
+%\newcommand{\F}{\mathcal{F}}
+
+The balanced dynamics satisfies the potential vorticity equation
+\beq
+q_t + \sJ(\psi,q)  = \F_q -\mu \zeta + \D_q \com
+\label{balanced_dynamics}
+\eeq
+where $\F_q(x,y,t)$ is a forcing, $\mu$ is the linear bottom drag. $\F_q$ is a
+stochastic forcing that renovates every $\tau$,
+\renewcommand{\Hf}{\mathcal{H}}
+\beq
+\label{F_q}
+\F_q = \xi_q(x,y,t)/\tau^{1/2}\com
+\eeq
+where $\xi_q$ is a normally-distributed random field with annular horizontal wavenumber spectrum
+centered at $k_f$:
+\beq
+\label{spec_forcing}
+\Es(\hat{\F_q^\star}\hat{\F_q}) =  A \exp\big\{{-[(k^2+l^2)^{1/2}-k_f]^2/2\Delta_f^2}\big\}\com
+\eeq
+where $\Delta_f$ is the width of the spectrum and $\hat{\F_q}$ is the Fourier transform of $\F$:
+\beq
+\hat{\F_q}(k,l) = \frac{1}{(2\pi)^2}\iint \F_q(x,y)\ee^{\ii(kx + ly)}\dd k \dd l\per
+\eeq
+The normalization condition,
+\beq
+\label{norm_fq}
+\frac{1}{(2\pi)^2}\iint\half(k^2 + l^2)\Es(\hat{\Ff_q^\star}\hat{\Ff_q}) \dd k \dd l=1\com
+\eeq
+determines the constant A. In the waveless case, this normalization ensures that
+the expectation of the energy input equals the variance of the forcing $\sigma_q^2$
+\beq
+\Es[\xi_q(n)\xi_q(m)]= \sigma_q^2 \tau \delta_{mn}\,;
+\eeq
+see discussion in the next section.
+%  And the horizontal structure of the forcing, $\Hf(x,y)$, also renovates every the wavenumber spectrum of the forcing is
+
+The vertical plane-wave model is completed by the YBJ equation for the evolution
+of the back-rotated near-inertial velocity $\phi$:
 \beq
 \phi_t + \sJ(\psi,\phi) +  \phi \tfrac{\ii}{2}\ze - \tfrac{\ii}{2} \disp \lap \phi
  = \xi_\phi -\gamma \phi + \D_\phi\per
  \label{ybj_dynamics}
 \eeq
 
-In \eqref{balanced_dynamics}, $\mu$ is the linear drag, $\xi_q$ is a white-noise forcing
-with random horizontal structure with a ring-like isotropic spectrum peaking at $|\mathbf{k}_f|$
-and variance $\sigma^2_q$.
-In \eqref{ybj_dynamics}, $\xi_\phi$ is a white-noise spatially uniform forcing with
-variance $\sigma^2_\phi$, and $\gamma$
-is a linear damping. In \eqref{balanced_dynamics} and \eqref{ybj_dynamics}, the $\D$ terms represent
-small-scale dissipation.
+In \eqref{ybj_dynamics}  $\gamma$
+is a linear damping coefficient, which is related to the vertical viscosity
+that damps the near-inertial velocity:
+\beq
+\nu \p_z^2(\phi \ee^{\ii \varpi}) = - \underbrace{m^2\nu}_{\defn \gamma}\phi\com
+\eeq
+where $\varpi = mz - f_0 t$.
+
+Also in \eqref{ybj_dynamics}, $\F_\phi(t)$ is a stochastic forcing that renovates
+every $\tau$ with variance $\Es(\F_\phis\F_\phi) = \sigma_\phi^2$; $\F_\phi$ has
+no spatial structure. The advantage of forcing the waves with this type of stochastic
+forcing is the a priori knowledge of the energy input. Experimenting with constant
+and shot-noise yields  qualitatively similar results to the solutions forced by
+white-noise.
+
+In \eqref{balanced_dynamics} and \eqref{ybj_dynamics}, the $\D_q$ and $\D_phi$ represent
+small-scale horizontal dissipation, which are necessary for numerical stability.
+In the solution described bellow, small-scale horizontal dissipation contributes
+insignificant sinks to the energy budgets.
+
 
 \subsection{Power integrals}
 
@@ -154,8 +212,8 @@ The balanced kinetic energy equation is
 where $\Gamma_r$ and $\Gamma_a$ are energy conversion terms and $\Xi$ is a source of balanced kinetic energy
 due to wave dissipation (cf. RWY); $\la \ra$ represents spatial average.
 If the were no waves, i.e., $\phi(t=0)=0$ and $\sigma_\phi^2=0$,  then $\Gamma_r=\Gamma_a = 0$, and the expectation of the work due to the white-noise forcing
-is $-\la\psi\xi_q\ra = \sigma_q^2$. Ignoring small-scale dissipation, the expectation of equilibrated energy level
-is $\Ep(\K) = \sigma_q^2/2\mu$.
+is $\E-\la\psi\xi_q\ra = \sigma_q^2$. Ignoring small-scale dissipation, the expectation of equilibrated energy level
+is $\K = \sigma_q^2/2\mu$.
 
 The wave action equation is
 \beq
@@ -164,7 +222,7 @@ The wave action equation is
 \label{A}
 \eeq
 The expectation of the work due to the white-noise forcing is $ \tfrac{1}{2}\la \phis \xi_\phi+\phi \xi_\phis \ra = \sigma_\phi^2\com$
-and the expectation of the equilibrated action is $\Ep(\A) = \sigma_\phi^2/2f_0\gamma$.
+and the expectation of the equilibrated action is $\A = \sigma_\phi^2/2f_0\gamma$.
 
 The potential energy equation  is
 
@@ -226,6 +284,38 @@ than the balanced eddies due to straining by the flow and wave interference.
 This snapshot resembles the wave field in decaying wave-modified
 two-dimensional turbulence (RWY).
 
+Figure \eqref{energies_reference} shows time series of balanced kinetic energy
+and wave action and wave potential energy. The system equilibrates after $\sim\!1
+\, \mu^{-1} = 4 \gamma^{-1}$. Wave action $\A$ displays large fluctuations ($50\%$ of
+ the time-average equilibrated value). Balanced kinetic energy $\K$
+and wave potential energy $\P$, on the other hand, show much smaller fluctuations
+($10\%$ of the equilibrated levels). Interestingly, $\K$ and $\P$ fluctuate
+largely out of phase.
+
+The wave kinetic energy equilibrate at 60\% of theoretical prediction for waveless
+turbulence forced by white-noise: $\Ewn = \sigma_q^2/\mu$. And the wave potential
+energy equilibrates at about $10\%$ of the wave kinetic energy level, which suggests
+that stimulated generation plays a crucial role in the equilibration of forced
+barotropic turbulence.  Indeed, figure \ref{energy_budgets_reference}a shows that
+stimulated generation, $-(\Gamma_r+\Gamma_a)$ in \eqref{Ke}, contributes about half
+of the sink of wave kinetic energy---bottom drag,
+$-2\mu \K$ in  \eqref{Ke}, accounts for the other half. Wave streaming, $\Xi$ in
+\eqref{Ke}, is small but significant; $\Xi$ contributes about 5\% source of $\K$.
+See table X1 for details of the budget.
+
+The wave potential energy budget (figure \ref{energy_budgets_reference}b) confirms that
+linear dissipation $-2\gamma \P$ damps most of $\P$ created via stimulated generation;
+the residual is smaller than $1\%$ (table X2). Similarly, linear dissipation
+$-2\gamma \A$ removes virtually all the wave action
+$\A$ input by the white-noise forcing. While the forcing input is nearly constant,
+wave action and the linear dissipation are highly interment. Thus, vertical viscosity damps the waves
+and the details of horizontal small-scale dissipation are irrelevant.
+
+The balanced kinetic energy spectrum has a submesoscale spectrum much smaller the
+one of waveless turbulence. Stimulated generation also appears to slow down the
+inverse cascade of balanced kinetic energy: there's more energy at large-scales
+in the spectrum of waveless turbulence. The wave action has a nearly flat spectrum
+between the forcing scale $k_f$ and the dissipative scale $k_d$.
 
 \begin{figure}
 \centering
@@ -245,7 +335,7 @@ two-dimensional turbulence (RWY).
          kinetic energy ($f_0 \A$)  for the solution with parameters in table
          \ref{parameters_reference}. The power is scaled by the work due to the
          wave forcing $W=\sigma_w^2/2$.}
-        \label{energies_reference}
+        \label{energy_budgets_reference}
 \end{figure}
 
 
