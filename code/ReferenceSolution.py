@@ -30,6 +30,8 @@ from niwqg import CoupledModel
 from niwqg import InitialConditions as ic
 import cmocean
 
+from Utils import *
+
 from pyspec import spectrum
 
 plt.close('all')
@@ -156,7 +158,7 @@ im1 = plt.contourf(model.x/Lf,model.y/Lf,model.q/Q,cv,\
 plt.xlabel(r'$x\, k_f$')
 plt.ylabel(r'$y\, k_f$')
 
-plt.text(50.,51.5,r"$t\,\,\mu = %3.2f$" % (model.t*model.mu))
+plt.text(50.,51.5,r"$t\,\,\gamma = %3.2f$" % (model.t*model.muw))
 #plt.title(r'$t \times U_e k_e$= %3.2f' %(t))
 #figname = pathi+"figs2movie/"+fni[-18:-3]+".png"
 
@@ -188,7 +190,7 @@ im1 = plt.contourf(model.x/Lf,model.y/Lf,model.q/Q,cv,\
 plt.xlabel(r'$x\, k_f$')
 plt.ylabel(r'$y\, k_f$')
 
-plt.text(50.,51.5,r"$t\,\,\mu = %3.2f$" % (model.t*model.mu))
+plt.text(50.,51.5,r"$t\,\,\gamma = %3.2f$" % (model.t*model.muw))
 #plt.title(r'$t \times U_e k_e$= %3.2f' %(t))
 #figname = pathi+"figs2movie/"+fni[-18:-3]+".png"
 
@@ -205,7 +207,7 @@ plt.yticks([])
 
 cbaxes = fig.add_axes([0.575, 1., 0.3, 0.025])
 plt.colorbar(im2,cax=cbaxes,ticks=[-0.05,-0.025,0.,0.025,0.05],orientation='horizontal',
-                 label=r'Wave action density $[\mathcal{A}/A]$')
+                 label=r'Wave vertical velocity $[w/\Phi]$')
 plt.savefig('figs/snapshots_pv_w_qg-niw', pad_inces=0, bbox_inches='tight')
 
 # potential vorticities 
@@ -218,7 +220,7 @@ im1 = plt.contourf(model.x/Lf,model.y/Lf,model.q_psi/Q,cv,\
 plt.xlabel(r'$x\, k_f$')
 plt.ylabel(r'$y\, k_f$')
 
-plt.text(50.,51.5,r"$t\,\,\mu = %3.2f$" % (model.t*model.mu))
+plt.text(50.,51.5,r"$t\,\,\gamma = %3.2f$" % (model.t*model.muw))
 #plt.title(r'$t \times U_e k_e$= %3.2f' %(t))
 #figname = pathi+"figs2movie/"+fni[-18:-3]+".png"
 

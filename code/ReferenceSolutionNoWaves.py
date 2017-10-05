@@ -30,6 +30,8 @@ from niwqg import CoupledModel
 from niwqg import InitialConditions as ic
 import cmocean
 
+from Utils import *
+
 from pyspec import spectrum
 
 plt.close('all')

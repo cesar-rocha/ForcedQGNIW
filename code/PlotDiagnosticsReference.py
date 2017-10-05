@@ -199,7 +199,7 @@ residual_A = residual.mean()/work_w_tot
 residual = diags['gamma_r'][eq]+diags['gamma_a'][eq]+diags['chi_phi'][eq]
 gamma_tot = (diags['gamma_r'][eq]+diags['gamma_a'][eq]).mean()
 chi_phi_tot = diags['chi_phi'][eq].mean()/gamma_tot
-residual_P = residual.mean()/gamma_tot 
+residual_P = residual.mean()/gamma_tot
 
 # K budget
 residual =  -(diags['gamma_r'][eq]+diags['gamma_a'][eq]) + (diags['xi_r'][eq]+diags['xi_a'][eq]) + diags['ep_psi'][eq].mean() + (diags['Work_q'][eq]/(time[eq]/gamma))
