@@ -155,18 +155,18 @@ where $\xi_q$ is a normally-distributed random field with annular horizontal wav
 centered at $k_f$:
 \beq
 \label{spec_forcing}
-\Es(\hat{\xi_q^\star}\hat{\xi_q}) =  A \exp\big\{{-[(k^2+l^2)^{1/2}-k_f]^2/2\Delta_f^2}\big\}\com
+\Es(\hat{\xi_q^\star}\hat{\xi_q}) =  A \exp\big\{{-[(k^2+l^2)^{1/2}-k_f]^2/2\Delta_f^2}\big\};
 \eeq
-where $\Delta_f$ is the width of the spectrum and $\hat{\xi_q}$ is the Fourier transform of $\xi_q$:
+$\Delta_f$ is the width of the spectrum; and $\hat{\xi_q}$ is the Fourier transform of $\xi_q$:
 \beq
 \hat{\xi_q}(k,l) = \frac{1}{(2\pi)^2}\iint \xi_q(x,y)\ee^{\ii(kx + ly)}\dd k \dd l\per
 \eeq
-The normalization condition,
+The constant A is determined by the normalization condition,
 \beq
 \label{norm_fq}
-\frac{1}{(2\pi)^2}\iint\half(k^2 + l^2)\Es(\hat{\xi_q^\star}\hat{\xi_q}) \dd k \dd l=1\com
+\frac{1}{(2\pi)^2}\iint\half(k^2 + l^2)\Es(\hat{\xi_q^\star}\hat{\xi_q}) \dd k \dd l=1\per
 \eeq
-determines the constant A. In the waveless case, this normalization ensures that
+In the waveless case, this normalization ensures that
 the expectation of the energy input equals the variance of the forcing $\sigma_q^2$:
 \beq
 \Es[\xi_q(n)\xi_q(m)]= \sigma_q^2 \tau \delta_{mn}\,;
@@ -363,7 +363,7 @@ and wave potential energy $\P$, on the other hand, show much smaller fluctuation
 largely out of phase.
 
 The wave kinetic energy equilibrate at 60\% of theoretical prediction for waveless
-turbulence forced by white-noise: $\Ewn = \sigma_q^2/\mu$. And the wave potential
+turbulence forced by white-noise: $\Es(\K) = \sigma_q^2/\mu$. And the wave potential
 energy equilibrates at about $10\%$ of the wave kinetic energy level, which suggests
 that stimulated generation plays a crucial role in the equilibration of forced
 barotropic turbulence.  Indeed, figure \ref{energy_budgets_reference}a shows that
@@ -378,8 +378,8 @@ linear dissipation $-2\gamma \P$ damps most of $\P$ created via stimulated gener
 the residual is smaller than $1\%$ (table X2). Similarly, linear dissipation
 $-2\gamma \A$ removes virtually all the wave action
 $\A$ input by the white-noise forcing. While the forcing input is nearly constant,
-wave action and the linear dissipation are highly interment. Thus, vertical viscosity damps the waves
-and the details of horizontal small-scale dissipation are irrelevant.
+wave action and the linear dissipation are highly intermitent. Thus, vertical viscosity damps the waves
+and the details of horizontal small-scale dissipation are irrelevant for the energy budget.
 
 The balanced kinetic energy spectrum has a submesoscale spectrum much smaller the
 one of waveless turbulence. Stimulated generation also appears to slow down the
