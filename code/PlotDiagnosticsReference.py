@@ -12,7 +12,7 @@ import scipy.signal as signal
 
 plt.close('all')
 
-pathi = "output/512/"
+pathi = "output/512_hard/"
 patho = "../writeup/figs/"
 
 
@@ -49,6 +49,12 @@ U0 = 0.5                   # guessed equilibrated RMS velocity
 epsilon = (U0**2)*mu       # estimated energy input
 sigma_q = np.sqrt(epsilon) # the standard deviation of the random forcing
 sigma_w = 2*sigma_q
+
+# hard
+sigma_q = np.sqrt(epsilon)/2 # the standard deviation of the random forcing
+sigma_w = 4*sigma_q
+
+
 
 epsilon_q = (sigma_q**2)/2
 epsilon_w = (sigma_w**2)/2
@@ -128,7 +134,7 @@ pk = plt.plot(time,diags['ke_qg'][:]/E,label=r'$\mathcal{K}$')
 pp = plt.plot(time,diags['pe_niw']/E,label=r'$\mathcal{P}$')
 #plt.xlabel(r"Time $[t\,\,\gamma]$")
 plt.ylabel(r"Energy $[\mathcal{E}/E]$")
-plt.yticks([0,0.5,1.])
+plt.yticks([0,1.,2.,3.,4.])
 plt.legend(loc=(0.35,-0.2),ncol=3)
 remove_axes(ax,bottom=True)
 plot_fig_label(ax,xc=0.025,yc=0.95,label='a')
@@ -143,7 +149,7 @@ plt.ylim(-0.1,.1)
 plt.yticks([-0.1,0.0,.1])
 remove_axes(ax)
 plot_fig_label(ax,xc=0.025,yc=0.95,label='b')
-plt.savefig(patho+'energies_reference' , pad_inces=0, bbox_inches='tight')
+plt.savefig(patho+'energies_reference_hard' , pad_inces=0, bbox_inches='tight')
 
 # energy budgets
 fig = plt.figure(figsize=(8.5,8.))
@@ -156,7 +162,7 @@ plt.plot(time,-(gamma_r_filt+gamma_a_filt)/POWER,label=r'$-\Gamma$')
 plt.plot(time,(diags['xi_a'][:]+diags['xi_r'][:])/POWER,label=r'$\Xi$')
 plt.legend(loc=(0.45,1.025),ncol=4)
 plt.ylabel(r"Power [$\dot \mathcal{K} \,/\, W$]")
-plt.ylim(-.7,.7)
+plt.ylim(-.25,.25)
 remove_axes(ax,bottom=True)
 
 plot_fig_label(ax,xc=0.025,yc=0.95,label='a')
@@ -166,7 +172,7 @@ plt.plot(time,np.zeros_like(time),'--',color='0.5')
 plt.plot(time,gamma_r_filt/POWER,label=r'$\Gamma_r$')
 plt.plot(time,gamma_a_filt/POWER,label=r'$\Gamma_a$')
 plt.plot(time,diags['chi_phi'][:]/POWER,label=r'$-2\gamma\mathcal{P}$')
-plt.ylim(-.7,.7)
+plt.ylim(-.25,.25)
 plt.legend(loc=3,ncol=3)
 plt.ylabel(r"Power [$\dot \mathcal{P} \,/\, W$]")
 remove_axes(ax,bottom=True)
@@ -182,7 +188,7 @@ plt.legend(loc=1,ncol=2)
 remove_axes(ax)
 plot_fig_label(ax,xc=0.025,yc=0.95,label='c')
 
-plt.savefig(patho+'K_and_P_and_A_budget_reference', pad_inces=0, bbox_inches='tight')
+plt.savefig(patho+'K_and_P_and_A_budget_reference_har', pad_inces=0, bbox_inches='tight')
 
 
 #
