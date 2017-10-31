@@ -69,12 +69,18 @@ epsilon = (U0**2)*mu       # estimated energy input
 sigma_q = np.sqrt(epsilon) # the standard deviation of the random forcing
 sigma_w = 2*sigma_q
 
+# force the wave a bit harder
+sigma_q = np.sqrt(epsilon)/2  # the standard deviation of the random forcing
+sigma_w = 4*sigma_q
+
+
+
 # time
 dt = 0.000125*Tmu/4
 tmax = 20.*Tgamma
 
 # outputs
-path = "output/512"
+path = "output/512_hard"
 
 
 #
