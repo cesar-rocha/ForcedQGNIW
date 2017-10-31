@@ -103,9 +103,6 @@
 \begin{document}
 
 
-
-
-
 \title{Equilibration of forced barotropic turbulence by stimulated generation
 of near-inertial waves}
 
@@ -131,7 +128,8 @@ q = \underbrace{\lap \psi}_{\defn \zeta} +
                 \sJ(\phi^\star,\phi)\Big]}_{\defn q^w}\com
 \eeq
 where $\psi(x,y,t)$ is the wave-averaged streamfunction and $\phi(x,y,t)$ is the near-inertial
-back-rotated velocity of a vertical plane wave with wavenumber m; the total velocity is
+back-rotated velocity of a vertical plane wave with wavenumber m; the total
+horizontal velocity is
 \beq
 \label{phi}
 u + \ii v =  \phi \ee^{\ii\varpi}-\psi_y + \ii \psi_x\com
@@ -139,6 +137,7 @@ u + \ii v =  \phi \ee^{\ii\varpi}-\psi_y + \ii \psi_x\com
 where $\varpi \defn m z -f_0 t$ is the phase of the near-inertial wave.
 
 %\newcommand{\F}{\mathcal{F}}
+\subsection{The forced potential vorticity equation: balanced dynamics}
 The balanced dynamics satisfy the potential vorticity equation
 \beq
 q_t + \sJ(\psi,q)  = \F_q -\mu \zeta + \D_q \com
@@ -155,25 +154,37 @@ where $\xi_q$ is a normally-distributed random field with annular horizontal wav
 centered at $k_f$:
 \beq
 \label{spec_forcing}
-\Es(\hat{\xi_q^\star}\hat{\xi_q}) =  A \exp\big\{{-[(k^2+l^2)^{1/2}-k_f]^2/2\Delta_f^2}\big\}\com
+\Es(\hat{\xi_q^\star}\hat{\xi_q}) =  A \exp\big\{{-[(k^2+l^2)^{1/2}-k_f]^2/2\Delta_f^2}\big\};
 \eeq
-where $\Delta_f$ is the width of the spectrum and $\hat{\xi_q}$ is the Fourier transform of $\xi_q$:
+$\Delta_f$ is the width of the spectrum; and $\hat{\xi_q}$ is the Fourier transform of $\xi_q$:
 \beq
 \hat{\xi_q}(k,l) = \frac{1}{(2\pi)^2}\iint \xi_q(x,y)\ee^{\ii(kx + ly)}\dd k \dd l\per
 \eeq
-The normalization condition,
+The constant A is determined by the normalization condition,
 \beq
 \label{norm_fq}
-\frac{1}{(2\pi)^2}\iint\half(k^2 + l^2)\Es(\hat{\xi_q^\star}\hat{\xi_q}) \dd k \dd l=1\com
+\frac{1}{(2\pi)^2}\iint\half(k^2 + l^2)^{-1}\Es(\hat{\xi_q^\star}\hat{\xi_q}) \dd k \dd l= \sigma_q^2\per
 \eeq
-determines the constant A. In the waveless case, this normalization ensures that
+
+In the waveless case, this normalization ensures that
 the expectation of the energy input equals the variance of the forcing $\sigma_q^2$:
 \beq
 \Es[\xi_q(n)\xi_q(m)]= \sigma_q^2 \tau \delta_{mn}\,;
 \eeq
 see discussion in the next section.
-%  And the horizontal structure of the forcing, $\Hf(x,y)$, also renovates every the wavenumber spectrum of the forcing is
 
+The white-noise forcing requires a renovation time scale smaller than
+the numerical time step, $\tau \ll \Delta t$. For numerical implementation,
+however, we are forced choose $\tau = \Delta t$. The stochastic forcing $\F_q$
+is thus only an approximation to white noise. The white-noise approximation is
+accurature provided $\Delta t \ll (k_f U)^{-1}$, where $U$ is the root-mean-square
+velocity of the turbulence. This requirements is satisfied in all solutions discussed
+below. We thus loosely refer to $\F_q$, and
+the wave forcing $\F_\phi$ defined below, as white-noise throughout.
+
+
+%  And the horizontal structure of the forcing, $\Hf(x,y)$, also renovates every the wavenumber spectrum of the forcing is
+\subsection{The vertical plane-wave YBJ equation: wave dynamics}
 The vertical plane-wave model is completed by the YBJ equation for the evolution
 of the back-rotated near-inertial velocity $\phi$:
 \beq
@@ -222,7 +233,7 @@ the work due the wave forcing is
 And we obtain a prediction for the equilibrated wave action:
 \beq
 \label{prediced_A}
-\Es(\A) = \frac{\sigma_\phi^2}{2\gamma}\com
+\Es(\A) = \frac{\sigma_\phi^2}{2 f_0 \gamma}\com
 \eeq
 provided that small-scale dissipation $\tfrac{1}{2f_0}\la\phis\D_\phi+\phi\D_\phis\ra$
 is insiginificant.
@@ -230,10 +241,10 @@ is insiginificant.
 The balanced kinetic energy equation is
 \beq
 \frac{\dd}{\dd t} \underbrace{\half \la |\nabla \psi|^2 \ra}_{\defn \K} = -(\Gamma_r + \Gamma_a) + \Xi
- -\la \psi \F_q \ra -\ \mu \la|\nabla\psi|^2\ra - \la\psi\D_q\ra\com
+ -\la \psi \F_q \ra -\ \mu \la|\nabla\psi|^2\ra - \la\psi\D_q\ra\per
 \label{Ke}
 \eeq
-where $\Gamma_r$ and
+Above, $\Gamma_r$ and
 $\Gamma_a$ are energy conversion terms,
 \begin{align}
 \Gamma_r &\defn  \Big\la\half\ze \, \diver\Ff \Big\ra\com \label{convr}
@@ -268,13 +279,14 @@ due to wave dissipation:
     + \half f_0^{-1}\left[\left\la (\phis\D_\phi+\phi\D_\phis)\half\zeta\right\ra\right]
       + \mathbf{u}_q\bcdot\halfi (\D_\phi\grad\phis-\D_\phis\grad\phi)\com
 \eeq
-where $\mathbf{u}_g = \hat{\mathbf{z}}\cross\grad\psi$ is the geostrophic velocity.
+where $\mathbf{u}_g = \hat{\mathbf{z}}\cross\grad\psi$ is the geostrophic velocity;
+$\Xi$ is a form of ``wave streaming.''
 The first two terms in \eqref{Xi} stem from linear dissipation of $\phi$. The first
 terms shows that the dissipation of wave action in anticylones is a source of balanced
-kinetic energy. The second term shows that the anti-alignment of the geostrophic velocity
-with the wave action density flux is also a source of balanced kinetic energy. The
+kinetic energy. The second term shows that the alignment of the geostrophic velocity
+with the wave action density flux is a sink of balanced kinetic energy. The
 remanining two terms stem from small-scale dissipation.
-See RWY for a derivation of $\Gamma_r$, $\Gamma_a$, and $\Xi$.
+See \cite{rocha_etal2017} for a derivation of $\Gamma_r$, $\Gamma_a$, and $\Xi$.
 
 In the waveless case, $\phi(t=0)=0$ and $\F_\phi=0$,  which implies that
 $\Gamma_r=\Gamma_a = \Xi = 0$. In the white-noise limit, the waveless expectation for
@@ -282,7 +294,8 @@ the work delivered by the forcing is
 \beq
 \Es\big(-\la\psi\xi_q\ra\big) = \sigma_q^2\per
 \eeq
-Thus, we obtain a prediction for the equilibrated balanced kinetic energy:
+We thus obtain a prediction for the equilibrated balanced kinetic energy in the
+absence of waves:
 \beq
 \label{predicted_K}
 \Es(\K )= \frac{\sigma_q^2}{\mu}\com
@@ -351,7 +364,7 @@ The snapshot of wave action density depicts the incoherent nature of the equilib
 wave field, which is being scrambled by the turbulent balanced field
 (figure \ref{snapshots_pv_qg-niw_reference}b). The wave field develops scales smaller
 than the balanced eddies due to straining by the flow and wave interference.
-This snapshot resembles the wave field in decaying wave-modified
+The snapshot in \ref{snapshots_pv_qg-niw_reference}b resembles the wave field in decaying wave-modified
 two-dimensional turbulence (RWY).
 
 Figure \eqref{energies_reference} shows time series of balanced kinetic energy
@@ -363,14 +376,14 @@ and wave potential energy $\P$, on the other hand, show much smaller fluctuation
 largely out of phase.
 
 The wave kinetic energy equilibrate at 60\% of theoretical prediction for waveless
-turbulence forced by white-noise: $\Ewn = \sigma_q^2/\mu$. And the wave potential
+turbulence forced by white-noise: $\Es(\K) = \sigma_q^2/\mu$. And the wave potential
 energy equilibrates at about $10\%$ of the wave kinetic energy level, which suggests
 that stimulated generation plays a crucial role in the equilibration of forced
 barotropic turbulence.  Indeed, figure \ref{energy_budgets_reference}a shows that
 stimulated generation, $-(\Gamma_r+\Gamma_a)$ in \eqref{Ke}, contributes about half
 of the sink of wave kinetic energy---bottom drag,
 $-2\mu \K$ in  \eqref{Ke}, accounts for the other half. Wave streaming, $\Xi$ in
-\eqref{Ke}, is small but significant; $\Xi$ contributes about 5\% source of $\K$.
+\eqref{Ke}, is small but significant: $\Xi$ contributes about 5\% source of $\K$.
 See table X1 for details of the budget.
 
 The wave potential energy budget (figure \ref{energy_budgets_reference}b) confirms that
@@ -378,11 +391,11 @@ linear dissipation $-2\gamma \P$ damps most of $\P$ created via stimulated gener
 the residual is smaller than $1\%$ (table X2). Similarly, linear dissipation
 $-2\gamma \A$ removes virtually all the wave action
 $\A$ input by the white-noise forcing. While the forcing input is nearly constant,
-wave action and the linear dissipation are highly interment. Thus, vertical viscosity damps the waves
-and the details of horizontal small-scale dissipation are irrelevant.
+wave action and the linear dissipation are highly intermitent. Thus, vertical viscosity damps the waves
+and the details of small-scale horizontal dissipation are irrelevant for the energy budget.
 
-The balanced kinetic energy spectrum has a submesoscale spectrum much smaller the
-one of waveless turbulence. Stimulated generation also appears to slow down the
+The balanced kinetic energy spectrum is shallower at submesoscales compared to
+waveless turbulence. Stimulated generation also appears to slow down the
 inverse cascade of balanced kinetic energy: there's more energy at large-scales
 in the spectrum of waveless turbulence. The wave action has a nearly flat spectrum
 between the forcing scale $k_f$ and the dissipative scale $k_d$.
@@ -419,5 +432,6 @@ between the forcing scale $k_f$ and the dissipative scale $k_d$.
         \label{spectra_reference}
 \end{figure}
 
+\bibliography{ForcedQGNIW.bib}
 
 \end{document}
