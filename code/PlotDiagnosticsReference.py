@@ -12,7 +12,7 @@ import scipy.signal as signal
 
 plt.close('all')
 
-pathi = "output/512_hard/"
+pathi = "output/512_new/"
 patho = "../writeup/figs/"
 
 
@@ -61,7 +61,7 @@ epsilon_w = (sigma_w**2)/2
 
 # time
 dt = 0.000125*Tmu/4
-tmax = 20.*Tgamma
+tmax = 40.*Tgamma
 
 #
 # scaling non-dimensional numbers
