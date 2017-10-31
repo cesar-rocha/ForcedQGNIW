@@ -8,7 +8,7 @@ from Utils import *
 
 plt.close('all')
 
-pathi = "output/512/"
+pathi = "output/512_hard/"
 pathi_nowaves = "output/512_nowaves/"
 patho = "../writeup/figs/"
 
@@ -30,8 +30,8 @@ mu = 1./Tmu
 gamma = 4*mu
 U0 = 0.5                   # guessed equilibrated RMS velocity
 epsilon = (U0**2)*mu       # estimated energy input
-sigma_q = np.sqrt(epsilon) # the standard deviation of the random forcing
-sigma_w = 2*sigma_q
+sigma_q = np.sqrt(epsilon)/2 # the standard deviation of the random forcing
+sigma_w = 4*sigma_q
 epsilon_q = sigma_q**2
 epsilon_w = (sigma_w**2)/2
 K  = epsilon_q/mu
@@ -122,6 +122,7 @@ for fni in files:
         P = Piso[np.newaxis]
         A = Aiso[np.newaxis]
 
+
 E = E.mean(axis=0)
 A = A.mean(axis=0)
 P = P.mean(axis=0)
@@ -201,5 +202,5 @@ plt.tick_params(
     labelbottom='off') # labels along the bottom edge are off
 
 #plt.savefig("figs/spectrum_qg-niw")
-plt.savefig(patho+'spectrum_qg-niw', pad_inces=0, bbox_inches='tight')
+plt.savefig(patho+'spectrum_qg-niw_hard', pad_inces=0, bbox_inches='tight')
 

@@ -64,17 +64,17 @@ dk = 2*np.pi/L
 kf = 8*dk
 Lf = 1./kf
 dkf = 1*dk
-U0 = 0.5                   # guessed equilibrated RMS velocity
-epsilon = (U0**2)*mu       # estimated energy input
-sigma_q = np.sqrt(epsilon) # the standard deviation of the random forcing
-sigma_w = 2*sigma_q
+U0 = 0.5                    # guessed equilibrated RMS velocity
+epsilon = (U0**2)*mu        # estimated energy input
+sigma_q = np.sqrt(epsilon)/2 # the standard deviation of the random forcing
+sigma_w = 4*sigma_q
 
 # time
 dt = 0.000125*Tmu/4
 tmax = 20.*Tgamma
 
 # outputs
-path = "output/512_nowaves"
+path = "output/512_nowaves_hard"
 
 
 #
@@ -126,7 +126,7 @@ model = CoupledModel.Model(L=L,nx=nx, tmax = tmax,dt = dt, twrite=200,
                     f=f0,N=N,m=m,
                     wavenumber_forcing=kf,width_forcing=dkf,
                     sigma_q=sigma_q, sigma_w=0*sigma_w,
-                    use_mkl=True,nthreads=8)
+                    use_mkl=True,nthreads=6)
 
 # rest initial conditions
 model.set_q(np.zeros([model.nx]*2))

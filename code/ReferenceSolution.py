@@ -64,24 +64,21 @@ dk = 2*np.pi/L
 kf = 8*dk
 Lf = 1./kf
 dkf = 1*dk
-U0 = 0.5                   # guessed equilibrated RMS velocity
+U0 = 0.25                   # guessed equilibrated RMS velocity
 epsilon = (U0**2)*mu       # estimated energy input
 sigma_q = np.sqrt(epsilon) # the standard deviation of the random forcing
-sigma_w = 2*sigma_q
-
-# force the wave a bit harder
-sigma_q = np.sqrt(epsilon)/2  # the standard deviation of the random forcing
 sigma_w = 4*sigma_q
 
-
+# no drag
+mu = 0.
 
 # time
 dt = 0.000125*Tmu/4
-tmax = 20.*Tgamma
+tmax = 40.*Tgamma
+tmax = 80.*Tgamma
 
 # outputs
-path = "output/512_hard"
-
+path = "output/512_newest_nodrag"
 
 #
 # theoretical predictions
@@ -241,7 +238,6 @@ im1 = plt.contourf(model.x/Lf,model.y/Lf,(model.q-model.q_psi)/Q,cv,\
 plt.xlabel(r'$x\, k_f$')
 plt.yticks([])
 plt.savefig('figs/snapshots_pvs_qg-niw', pad_inces=0, bbox_inches='tight')
-
 
 #
 # quick look at the diagnostics
