@@ -327,7 +327,7 @@ wave potential energy created by stimilated generation dissipates via $-2\gamma\
       \hline
       $\mathsf{N}$   & Number of modes &  512  \\
       $L_d$ & Domain size & $2\pi\times 200$ km \\
-      $\sigma_q^2$ & Balanced-forcing variance & $1.45\,\,10^{-8}$ m$^2$ s$^{-3}$ \\
+      $\sigma_q^2$ & Balanced-forcing variance & $3.62\,\,10^{-9}$ m$^2$ s$^{-3}$ \\
       $\sigma_w^2$ & Wave-forcing variance & $5.78\,\,10^{-8}$ m$^2$ s$^{-3}$ \\
       $k_f L_d/2\pi$    & Balanced-forcing wavenumber & 8 \\
       ${dk}_f L_d/2\pi$    & Balanced-forcing width &  1 \\
@@ -335,6 +335,7 @@ wave potential energy created by stimilated generation dissipates via $-2\gamma\
       $\gamma$ & Linear wave damping coefficient & $2.31\,\,10^{-7}$ s$^{-1}$ \\
       $N$ & Buoyancy frequency &  $5\,\,10^{-3}$ s$^{-1}$\\
       $f_0$ & Coriolis frequency &  $1\,\,10^{-4}$ s$^{-1}$\\
+      $2\pi\,m^{-1}$ & Vertical wavelength &  $1000$ m\\
       $\D_\phi$ & Exponential spectral filter & ---\\
       $\D_q$ & Exponential spectral filter & ---\\
    \end{tabular}
@@ -352,9 +353,10 @@ wave potential energy created by stimilated generation dissipates via $-2\gamma\
 \end{figure}
 
 Figure \ref{snapshots_pv_qg-niw_reference} shows snapshots of potential vorticity and wave
-action density for a solution with $\sigma_w^2 = 2\sigma_q^2$ and $\gamma = 4\mu$; table
+action density for a solution with $\sigma_w = 4 \sigma_q $ and $\gamma = 4\mu$; table
 \ref{parameters_reference} describes in detail the parameters of
-this reference solution. The equilibrated potential vorticity in figure
+this reference solution. (The parameters yield a solution in the asymptotic
+regime of valid of the model.)  The equilibrated potential vorticity in figure
 \ref{snapshots_pv_qg-niw_reference}a  resembles the vorticity field
 of waveless two-dimensional turbulence with its ubiquitous eddies, filaments,
 and coherent structures. A main difference is that the the potential vorticity
@@ -365,7 +367,7 @@ wave field, which is being scrambled by the turbulent balanced field
 (figure \ref{snapshots_pv_qg-niw_reference}b). The wave field develops scales smaller
 than the balanced eddies due to straining by the flow and wave interference.
 The snapshot in \ref{snapshots_pv_qg-niw_reference}b resembles the wave field in decaying wave-modified
-two-dimensional turbulence (RWY).
+two-dimensional turbulence \citep{rocha_etal2017}.
 
 Figure \eqref{energies_reference} shows time series of balanced kinetic energy
 and wave action and wave potential energy. The system equilibrates after $\sim\!1
@@ -393,12 +395,12 @@ $-2\gamma \A$ removes virtually all the wave action
 $\A$ input by the white-noise forcing. While the forcing input is nearly constant,
 wave action and the linear dissipation are highly intermitent. Thus, vertical viscosity damps the waves
 and the details of small-scale horizontal dissipation are irrelevant for the energy budget.
-
-The balanced kinetic energy spectrum is shallower at submesoscales compared to
-waveless turbulence. Stimulated generation also appears to slow down the
-inverse cascade of balanced kinetic energy: there's more energy at large-scales
-in the spectrum of waveless turbulence. The wave action has a nearly flat spectrum
-between the forcing scale $k_f$ and the dissipative scale $k_d$.
+%
+% The balanced kinetic energy spectrum is shallower at submesoscales compared to
+% waveless turbulence. Stimulated generation also appears to slow down the
+% inverse cascade of balanced kinetic energy: there's more energy at large-scales
+% in the spectrum of waveless turbulence. The wave action has a nearly flat spectrum
+% between the forcing scale $k_f$ and the dissipative scale $k_d$.
 
 \begin{figure}
 \centering
@@ -421,16 +423,21 @@ between the forcing scale $k_f$ and the dissipative scale $k_d$.
         \label{energy_budgets_reference}
 \end{figure}
 
+%
+% \begin{figure}
+% \centering
+% \includegraphics[width=.925\textwidth]{figs/spectrum_qg-niw.png}
+% \caption{Spectra of balanced kinetic energy (a) and wave kinetic and potential
+%           energies (b) calculated after equilibration ($t\,\gamma \ge 5$). The
+%           dashed line in (a) shows the balanced kinetic energy spectrum from a
+%           reference waveless simulation.}
+%         \label{spectra_reference}
+% \end{figure}
 
-\begin{figure}
-\centering
-\includegraphics[width=.925\textwidth]{figs/spectrum_qg-niw.png}
-\caption{Spectra of balanced kinetic energy (a) and wave kinetic and potential
-          energies (b) calculated after equilibration ($t\,\gamma \ge 5$). The
-          dashed line in (a) shows the balanced kinetic energy spectrum from a
-          reference waveless simulation.}
-        \label{spectra_reference}
-\end{figure}
+\section{Solution with $\mu = 0$}
+A natural question is whether the system equilibrates without bottom drag. We thus
+solve the vertical plane wavemodel with $\mu = 0$; all other parameters are the
+same as in the reference solution above.
 
 \bibliography{ForcedQGNIW.bib}
 
