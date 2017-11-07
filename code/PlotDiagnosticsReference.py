@@ -105,8 +105,9 @@ time = diags['time'][:]*gamma
 #
 
 # scaling
-E = epsilon_q/mu
+#E = epsilon_q/mu
 Ew = PHI**2 / 2
+E = Ew
 POWER = (sigma_w**2 / 2)
 
 # averages
@@ -134,7 +135,7 @@ pk = plt.plot(time,diags['ke_qg'][:]/E,label=r'$\mathcal{K}$')
 pp = plt.plot(time,diags['pe_niw']/E,label=r'$\mathcal{P}$')
 #plt.xlabel(r"Time $[t\,\,\gamma]$")
 plt.ylabel(r"Energy $[\mathcal{E}/E]$")
-plt.yticks([0,1.,2.,3.,4.])
+plt.yticks([0,.5,1.,1.5])
 plt.legend(loc=(0.35,-0.2),ncol=3)
 remove_axes(ax,bottom=True)
 plot_fig_label(ax,xc=0.025,yc=0.95,label='a')
@@ -145,8 +146,8 @@ plt.plot(time,(diags['ke_qg'][:]-Km)/E,label=r'$\mathcal{K}$',color=pk[0].get_co
 plt.plot(time,(diags['pe_niw']-Pm)/E,label=r'$\mathcal{P}$',color=pp[0].get_color())
 plt.xlabel(r"Time $[t\,\,\gamma]$")
 plt.ylabel(r"Energy diff $[\Delta \mathcal{E}/E]$")
-plt.ylim(-0.15,.15)
-plt.yticks([-0.1,0.0,.1])
+plt.ylim(-0.05,.05)
+plt.yticks([-0.05,0.0,.05])
 remove_axes(ax)
 plot_fig_label(ax,xc=0.025,yc=0.95,label='b')
 plt.savefig(patho+'energies_reference_hard' , pad_inces=0, bbox_inches='tight')
