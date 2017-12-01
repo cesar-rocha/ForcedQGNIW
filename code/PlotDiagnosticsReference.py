@@ -12,7 +12,7 @@ import scipy.signal as signal
 
 plt.close('all')
 
-pathi = "output/512_new/"
+pathi = "output/new/512_reference/"
 patho = "../writeup/figs/"
 
 
@@ -135,7 +135,7 @@ pk = plt.plot(time,diags['ke_qg'][:]/E,label=r'$\mathcal{K}$')
 pp = plt.plot(time,diags['pe_niw']/E,label=r'$\mathcal{P}$')
 #plt.xlabel(r"Time $[t\,\,\gamma]$")
 plt.ylabel(r"Energy $[\mathcal{E}/E]$")
-plt.yticks([0,.5,1.,1.5])
+plt.yticks([0,.5,1.,1.5,2.,2.5])
 plt.legend(loc=(0.35,-0.2),ncol=3)
 remove_axes(ax,bottom=True)
 plot_fig_label(ax,xc=0.025,yc=0.95,label='a')
@@ -150,7 +150,7 @@ plt.ylim(-0.05,.05)
 plt.yticks([-0.05,0.0,.05])
 remove_axes(ax)
 plot_fig_label(ax,xc=0.025,yc=0.95,label='b')
-plt.savefig(patho+'energies_reference_hard' , pad_inces=0, bbox_inches='tight')
+plt.savefig(patho+'energies_reference' , pad_inces=0, bbox_inches='tight')
 
 # energy budgets
 fig = plt.figure(figsize=(8.5,8.))
@@ -189,7 +189,7 @@ plt.legend(loc=1,ncol=2)
 remove_axes(ax)
 plot_fig_label(ax,xc=0.025,yc=0.95,label='c')
 
-plt.savefig(patho+'K_and_P_and_A_budget_reference_hard', pad_inces=0, bbox_inches='tight')
+plt.savefig(patho+'K_and_P_and_A_budget_reference', pad_inces=0, bbox_inches='tight')
 
 
 #
