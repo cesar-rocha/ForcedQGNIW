@@ -10,8 +10,6 @@
 \usepackage{epsfig}
 \usepackage[mathscr]{eucal}
 
-
-
 \bibliographystyle{plain}
 
 %% For lucida bright
@@ -19,9 +17,6 @@
 %\usepackage{lucidabr}
 %\usepackage{bm}
 %%%
-
-
-
 
 \usepackage{color,amssymb,amsmath,amsthm}
 
@@ -335,7 +330,7 @@ wave potential energy created by stimilated generation dissipates via $-2\gamma\
       $\gamma$ & Linear wave damping coefficient & $2.31\,\,10^{-7}$ s$^{-1}$ \\
       $N$ & Buoyancy frequency &  $5\,\,10^{-3}$ s$^{-1}$\\
       $f_0$ & Coriolis frequency &  $1\,\,10^{-4}$ s$^{-1}$\\
-      $2\pi\,m^{-1}$ & Vertical wavelength &  $1000$ m\\
+      $2\pi\,m^{-1}$ & Vertical wavelength &  $800$ m\\
       $\D_\phi$ & Exponential spectral filter & ---\\
       $\D_q$ & Exponential spectral filter & ---\\
    \end{tabular}
@@ -352,6 +347,65 @@ wave potential energy created by stimilated generation dissipates via $-2\gamma\
         \label{snapshots_pv_qg-niw_reference}
 \end{figure}
 
+\begin{table}
+ \begin{center}
+   \caption{Balanced kinetic energy budget of the reference and no-drag and no-wave solutions.
+              Each term is normalized by the predicted amount of power delivered by
+              the random force $\sigma_q^2$.}
+   \label{K-budgets}
+   \begin{tabular}{ l | c | c | c }
+     \hline
+       &  Reference & No-drag & No-wave \\
+      \hline
+      Work & 1.00 &   1.00   &  1.00\\
+      Streamming & 0.24 & 0.60 & --\\
+      Stimulated generation & -0.64 & -1.77 & --\\
+      Linear drag & -0.67 & -- & -0.99\\
+      Residual. & -0.08 & 0.17 & -0.01\\
+   \end{tabular}
+ \end{center}
+\end{table}
+
+
+
+\begin{table}
+ \begin{center}
+   \caption{Wave kinetic energy budget of the reference and no-drag solutions.
+              Values represent averages after equilibration, normalized by the work
+              delivered the random force.}
+   \label{A-budgets}
+   \begin{tabular}{ l | c | c }
+     \hline
+       &  Reference & No-drag  \\
+      \hline
+      Work & 1.00 &   1.00   \\
+      Linear diss. & -1.06 & --\\
+      Residual & 0.04 & 0.06 \\
+   \end{tabular}
+ \end{center}
+\end{table}
+
+
+\begin{table}
+ \begin{center}
+   \caption{Wave potential energy budget of the reference and no-drag solutions.
+              Values represent averages after equilibration, normalized by the production
+              of wave potential energy via stimulated generation.}
+   \label{P-budgets}
+   \begin{tabular}{ l | c | c }
+     \hline
+       &  Reference & No-drag  \\
+      \hline
+      Refractive conversion & 0.32  & 0.37 \\
+      Advective conversion  & 0.68  & 0.63 \\
+      Linear dissipation & -0.99 & -0.97\\
+      Residual & -0.01 & -0.03\\
+   \end{tabular}
+ \end{center}
+\end{table}
+
+
+
 Figure \ref{snapshots_pv_qg-niw_reference} shows snapshots of potential vorticity and wave
 action density for a solution with $\sigma_w = 4 \sigma_q $ and $\gamma = 4\mu$; table
 \ref{parameters_reference} describes in detail the parameters of
@@ -360,13 +414,13 @@ regime of valid of the model.)  The equilibrated potential vorticity in figure
 \ref{snapshots_pv_qg-niw_reference}a  resembles the vorticity field
 of waveless two-dimensional turbulence with its ubiquitous eddies, filaments,
 and coherent structures. A main difference is that the the potential vorticity
-of this wave-modified turbulence is more fine-grained (see spectrum?).
+of this wave-modified turbulence is more fine-grained.
 
 The snapshot of wave action density depicts the incoherent nature of the equilibrated
 wave field, which is being scrambled by the turbulent balanced field
 (figure \ref{snapshots_pv_qg-niw_reference}b). The wave field develops scales smaller
 than the balanced eddies due to straining by the flow and wave interference.
-The snapshot in \ref{snapshots_pv_qg-niw_reference}b resembles the wave field in decaying wave-modified
+The snapshot in figure \ref{snapshots_pv_qg-niw_reference}b resembles the wave field in decaying wave-modified
 two-dimensional turbulence \citep{rocha_etal2017}.
 
 Figure \eqref{energies_reference} shows time series of balanced kinetic energy
@@ -436,9 +490,65 @@ and the details of small-scale horizontal dissipation are irrelevant for the ene
 
 \section{Solution with $\mu = 0$}
 A natural question is whether the system equilibrates without bottom drag. We thus
-solve the vertical plane wavemodel with $\mu = 0$; all other parameters are the
-same as in the reference solution above.
+solve the vertical plane-wave model with $\mu = 0$; all other parameters are the
+same as in the reference solution above. The balanced kinetic energy did not
+equilibrate over course of 80 wave dissipative time units (see figure \ref{energies_nodrag}).
+But the waves do equilibrate.
 
+The snapshot of potential vorticity at $t\gamma = 60$ (figure \ref{snapshots_pv_qg-niw_nodrag})
+shows weaker large-scale vortices. These vortices are bigger than the the vortices
+of the reference solution with $\mu\neq 0$ but also less coherent. Thus, the balanced
+kinetic energy has cascade towards larger scales. The wave action density is
+concentrated near the big vortices and has much finer scales than the $\mu\neq 0$
+solution above.
+
+By $t\gamma = 60$ the balanced kinetic energy $\K$ is about the same times larger
+than the equilibrated wave kinetic energy $f_0\A$. Wave potential energy $\P$
+appears to equilibrate at $10\%$ of $f_0 \A$.
+
+The wave action budget remains the same: the action delivered by the the stochastic
+forcing is removed by linear dissipation of $\phi$. The wave potential energy budget
+is also as simple as before: $\P$ is created by stimulated generation and removed
+by linear dissipation. And geostrophic straining accounts for most of stimulated
+generation.
+
+The balanced kinetic energy budget differs markedly from the $\mu\neq 0$ solution.
+Wave streaming accounts for about 30-40\% of the generation of $\K$; all the input energy
+is removed by stimulated generation.
+
+
+\begin{figure}
+\centering
+\includegraphics[width=.925\textwidth]{figs/snapshots_pv_qg-niw_nodrag.png}
+\caption{Snapshot of potential vorticity and wave action density for the solution
+         with parameters in  table \ref{parameters_reference} but $\mu=0$. The scale of potential vorticity
+         and action are  the same as in figure 1.}
+        \label{snapshots_pv_qg-niw_nodrag}
+\end{figure}
+
+\begin{figure}
+\centering
+\includegraphics[width=.825\textwidth]{figs/energies_nodrag.png}
+\caption{(a) Balanced kinetic energy ($\K$) and wave potential energy ($\P$) and wave
+         kinetic energy ($f_0 \A$)  for the solution with parameters in table
+         \ref{parameters_reference}. The energy difference, $\Delta \K$ and $\Delta \P$,
+         about a time average after equilibration ($t\,\gamma \ge 5$).}
+        \label{energies_nodrag}
+\end{figure}
+
+\begin{figure}
+\centering
+\includegraphics[width=.825\textwidth]{figs/K_and_P_and_A_budget_nodrag.png}
+\caption{The budget of (a) balanced kinetic energy ($\K$), wave potential energy ($\P$),
+        and (c) wave
+         kinetic energy ($f_0 \A$)  for the solution with parameters in table
+         \ref{parameters_reference}. The power is scaled by the work due to the
+         wave forcing $W=\sigma_w^2/2$.}
+        \label{energy_budgets_nodrag}
+\end{figure}
+
+
+\clearpage
 \bibliography{ForcedQGNIW.bib}
 
 \end{document}
