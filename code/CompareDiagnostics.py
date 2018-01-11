@@ -197,8 +197,8 @@ plot_fig_label(ax,xc=0.025,yc=0.95,label='a')
 
 ax = fig.add_subplot(312)
 plt.plot([-5,65],[0,0],'k--')
-plt.plot(time,(signal.filtfilt(B,A,diags_reference['gamma_r'][:]))/POWER,label=r'$-\Gamma_r$')
-plt.plot(time,(signal.filtfilt(B,A,diags_reference['gamma_a'][:]))/POWER,label=r'$-\Gamma_a$')
+plt.plot(time,(signal.filtfilt(B,A,diags_reference['gamma_r'][:]))/POWER,label=r'$\Gamma_r$')
+plt.plot(time,(signal.filtfilt(B,A,diags_reference['gamma_a'][:]))/POWER,label=r'$\Gamma_a$')
 plt.plot(time,diags_reference['chi_phi'][:]/POWER,label=r'$-2\gamma\mathcal{P}$')
 plt.ylim(-.17,.17)
 plt.legend(loc=(.55,.975),ncol=3)
@@ -241,8 +241,8 @@ plot_fig_label(ax,xc=0.025,yc=0.95,label='a')
 
 ax = fig.add_subplot(312)
 plt.plot([-5,65],[0,0],'k--')
-plt.plot(time,(signal.filtfilt(B,A,diags_nodrag['gamma_r'][:]))/POWER,label=r'$-\Gamma_r$')
-plt.plot(time,(signal.filtfilt(B,A,diags_nodrag['gamma_a'][:]))/POWER,label=r'$-\Gamma_a$')
+plt.plot(time,(signal.filtfilt(B,A,diags_nodrag['gamma_r'][:]))/POWER,label=r'$\Gamma_r$')
+plt.plot(time,(signal.filtfilt(B,A,diags_nodrag['gamma_a'][:]))/POWER,label=r'$\Gamma_a$')
 plt.plot(time,diags_nodrag['chi_phi'][:]/POWER,label=r'$-2\gamma\mathcal{P}$')
 plt.ylim(-.3,.3)
 plt.legend(loc=(.55,.975),ncol=3)
@@ -265,7 +265,6 @@ remove_axes(ax)
 plot_fig_label(ax,xc=0.025,yc=0.95,label='c')
 plt.text(2,1.75,'Wave action budget')
 plt.savefig(patho+'K_and_P_and_A_budget_nodrag.png', pad_inces=0, bbox_inches='tight')
-
 
 
 #
