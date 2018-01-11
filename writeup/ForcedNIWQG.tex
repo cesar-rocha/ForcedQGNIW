@@ -325,7 +325,7 @@ the numerical time step, $\tau \ll \Delta t$. For numerical implementation,
 however, we are forced choose $\tau = \Delta t$. The stochastic force $\F_q$
 is thus only an approximation to white noise. The white-noise approximation is
 accurature provided $\Delta t \ll (k_f U)^{-1}$, where $U$ is the root-mean-square
-velocity of the turbulence. This requirements is satisfied in all solutions discussed
+velocity of the turbulence. This requirement is satisfied in all solutions discussed
 below. We thus loosely refer to $\F_q$, and
 the wave forcing $\F_\phi$ defined below, as white-noise throughout.
 
@@ -351,13 +351,13 @@ Also in \eqref{ybj_dynamics}, $\F_\phi(t)$ is a stochastic force that renovates
 every $\tau$ with variance $\Es(\F_\phis\F_\phi) = \sigma_\phi^2$; $\F_\phi$ has
 no spatial structure. The advantage of forcing the waves stochastically is that
 the rate of energy input by the forcing is predicted. We experimented
-with constant and shot-noise forcings. The results from these experiments are
+with constant and shot-noise forcing. The results from these experiments are
  qualitatively similar results to the solutions forced by white-noise.
 
 In \eqref{balanced_dynamics} and \eqref{ybj_dynamics}, $\D_q$ and $\D_{\phi}$ represent
 small-scale horizontal dissipation, which are necessary for numerical stability.
 In practice, we use an exponential spectral filter, which selectively damps aliased
-wavenumbers. In the solutions described bellow, small-scale horizontal dissipation
+wavenumbers. In the solutions described below, small-scale horizontal dissipation
 is very small.
 
 \section{Power integrals}
@@ -502,14 +502,34 @@ waves damp the balanced flow.
  \end{center}
 \end{table}
 
-
 \subsection{Qualitative aspects}
 Figure \ref{equilibrated_pv} shows snapshots of potential vorticity of the three simulations.
 The three snapshots depict ubiquitous features of 2D turbulence such as coherent vortices
 and filaments. But the no-wave vorticity $\lap\psi$ is smoother than the potential
 vorticity $q$ of the wave solutions. The potential vorticity in the wave solution is
-more filamented. This filamentation is particularly evident in the no-drag potential
+more filamented. And this filamentation is particularly evident in the no-drag potential
 vorticity, which depicts fewer and less-coherent vortices.
+
+Figure \ref{equilibrated_energy} shows time series of balanced kinetic energy $\K$,
+wave kinetic energy $f_0\A$, and wave potential energy $\P$.  As expected, $\K$ in
+the no-wave solution equilibrates at the predicted level,
+\beq
+\frac{\sigma_q^2}{\mu} = \frac{\sigma_w^2}{4\gamma}\com
+\eeq
+using the parameters in table \ref{parameters_reference}. The reference solution
+equilibrates at $60\%$ of this predicted value, whereas the no-drag solution is
+much more energetic, showing an equilibrated energy level about three
+times larger than the predicted no-wave energy.
+
+The wave kinetic energy displays large fluctuations about the the predicted level,
+with no statistical difference between reference and no-drag solutions. This lack
+of difference is expected because the action budget \eqref{A} is independent of the
+balanced flow dynamics. The wave potential energy does show quantitative and
+qualitative differences between reference and no-drag solution, with $\P$ twice
+as large and more variable in the no-drag solutions.
+
+To better understand the qualitative and quantitative differences between the reference
+and no-drag simulations we now discuss an energy budget analysis.
 
 \begin{figure}
 \centering
@@ -519,18 +539,93 @@ vorticity, which depicts fewer and less-coherent vortices.
         \label{equilibrated_pv}
 \end{figure}
 
-
-
-\subsection{The equilibrated Energy}
-
 \begin{figure}
 \centering
 \includegraphics[width=.825\textwidth]{figs/energies_comparison.png}
 \caption{Time series of balanced kinetic energy $\K$,   wave kinetic energy $f_0\A$,
           and wave potential energy $\P$ for the three simulations. The normalization
-          constant is the predicted wave kinetic energy, $E = \sigma_w^2/2$.}
+          constant is the predicted wave kinetic energy, $E = \sigma_w^2/2\gamma$.}
         \label{equilibrated_energy}
 \end{figure}
+
+\subsection{Energy budgets}
+Figures \ref{energy_budgets_reference} and \ref{energy_budgets_nodrag} show the
+energy budgets of the reference and non-wave solutions. 
+
+\begin{figure}
+\centering
+\includegraphics[width=.825\textwidth]{figs/K_and_P_and_A_budget_reference.png}
+\caption{The budget of (a) balanced kinetic energy ($\K$), wave potential energy ($\P$),
+        and (c) wave kinetic energy ($f_0 \A$)  for the solution with parameters in table
+         \ref{parameters_reference}. The power is scaled by the work due to the
+         wave forcing $W=\sigma_w^2/2$.}
+        \label{energy_budgets_reference}
+\end{figure}
+\begin{figure}
+\centering
+\includegraphics[width=.825\textwidth]{figs/K_and_P_and_A_budget_nodrag.png}
+\caption{The budget of (a) balanced kinetic energy ($\K$), wave potential energy ($\P$),
+        and (c) wave
+         kinetic energy ($f_0 \A$)  for the solution with parameters in table
+         \ref{parameters_reference}. The power is scaled by the work due to the
+         wave forcing $W=\sigma_w^2/2$.}
+        \label{energy_budgets_nodrag}
+\end{figure}
+
+\begin{table}
+ \begin{center}
+   \caption{Balanced kinetic energy budget of the reference and no-drag and no-wave solutions.
+              Each term is normalized by the predicted amount of power delivered by
+              the random force, $\sigma_q^2$.}
+   \label{K-budgets}
+   \begin{tabular}{ l | c | c | c }
+     \hline
+       &  Reference & No-drag & No-wave \\
+      \hline
+      Work & 1.00 &   1.00   &  1.00\\
+      Streamming & 0.24 & 0.60 & --\\
+      Stimulated generation & -0.64 & -1.77 & --\\
+      Linear drag & -0.67 & -- & -0.99\\
+      Residual. & -0.08 & 0.17 & -0.01\\
+   \end{tabular}
+\end{center}
+\end{table}
+
+
+\begin{table}
+ \begin{center}
+   \caption{Wave kinetic energy budget of the reference and no-drag solutions.
+              Values represent averages after equilibration, normalized by the work
+              delivered the random force, $\sigma_w^2/2$.}
+   \label{A-budgets}
+   \begin{tabular}{ l | c | c }
+     \hline
+       &  Reference & No-drag  \\
+      \hline
+      Work & 1.00 &   1.00   \\
+      Linear diss. & -1.06 & --\\
+      Residual & 0.04 & 0.06 \\
+   \end{tabular}
+ \end{center}
+\end{table}
+
+\begin{table}
+ \begin{center}
+   \caption{Wave potential energy budget of the reference and no-drag solutions.
+              Values represent averages after equilibration, normalized by the production
+              of wave potential energy via stimulated generation, $\Gamma_r + \Gamma_a$.}
+   \label{P-budgets}
+   \begin{tabular}{ l | c | c }
+     \hline
+       &  Reference & No-drag  \\
+      \hline
+      Refractive conversion & 0.32  & 0.37 \\
+      Advective conversion  & 0.68  & 0.63 \\
+      Linear dissipation & -0.99 & -0.97\\
+      Residual & -0.01 & -0.03\\
+   \end{tabular}
+ \end{center}
+\end{table}
 
 %
 % Bibliography
