@@ -264,7 +264,7 @@ plt.xlim(-2,60)
 remove_axes(ax)
 plot_fig_label(ax,xc=0.025,yc=0.95,label='c')
 plt.text(2,1.75,'Wave action budget')
-plt.savefig(patho+'K_and_P_and_A_budget_nodrag', pad_inces=0, bbox_inches='tight')
+plt.savefig(patho+'K_and_P_and_A_budget_nodrag.png', pad_inces=0, bbox_inches='tight')
 
 
 
