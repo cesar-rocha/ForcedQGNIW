@@ -134,6 +134,8 @@ plt.text(47,1.28,'No drag')
 plt.text(33,0.1,'Reference')
 plt.text(15,0.575,'No waves')
 
+plt.axvspan(20, 60, facecolor='k', alpha=0.1)
+
 ax = fig.add_subplot(312)
 plt.plot(time,(diags_reference['pe_niw'][:])/E,label=r'Reference',color=pk[0].get_color())
 plt.plot(time,(diags_nodrag['pe_niw'][:])/E,label=r'No drag',color=pp[0].get_color())
@@ -147,6 +149,8 @@ remove_axes(ax,bottom=True)
 plt.text(47,0.3,'No drag')
 plt.text(28,0.04,'Reference')
 
+plt.axvspan(20, 60, facecolor='k', alpha=0.1)
+
 ax = fig.add_subplot(313)
 plt.plot([-5,65],[Ew,Ew]/E,'k--')
 plt.plot(time,(diags_reference['ke_niw'][:])/E,label=r'Reference',color=pk[0].get_color())
@@ -156,6 +160,9 @@ plt.xlabel(r"Time $[t\,\,\gamma]$")
 plt.xlim(-2,60)
 remove_axes(ax)
 plt.ylim(0,3.5)
+
+plt.axvspan(20, 60, facecolor='k', alpha=0.1)
+
 plt.yticks([0,1.0,2.0,3.0],["0.0","1.0","2.0","3.0"])
 plot_fig_label(ax,xc=0.025,yc=0.95,label=r'$\mathcal{A}$')
 plt.savefig(patho+'energies_comparison' , pad_inces=0, bbox_inches='tight')
@@ -187,6 +194,7 @@ plt.plot(time,diags_reference['ep_psi'][:]/POWER,label=r'$-2\mu\,\mathcal{K}$')
 plt.plot(time,-(signal.filtfilt(B,A,diags_reference['gamma_r'][:]))/POWER,label=r'$-\Gamma_r$')
 plt.plot(time,-(signal.filtfilt(B,A,diags_reference['gamma_a'][:]))/POWER,label=r'$-\Gamma_a$')
 plt.plot(time,(diags_reference['xi_a'][:]+diags_reference['xi_r'][:])/POWER,label=r'$\Xi$')
+
 plt.legend(loc=(0.25,1.035),ncol=5)
 plt.ylabel(r"Power [$\dot \mathcal{K} \,/\, W$]")
 plt.ylim(-.17,.17)
@@ -194,6 +202,8 @@ plt.xlim(-2,60)
 remove_axes(ax,bottom=True)
 plt.text(2,.145,'Balanced kinetic energy budget')
 plot_fig_label(ax,xc=0.025,yc=0.95,label='a')
+
+plt.axvspan(20, 60, facecolor='k', alpha=0.1)
 
 ax = fig.add_subplot(312)
 plt.plot([-5,65],[0,0],'k--')
@@ -208,6 +218,8 @@ plot_fig_label(ax,xc=0.025,yc=0.95,label='b')
 plt.xlim(-2,60)
 plt.text(2,.145,'Wave potential energy budget')
 
+plt.axvspan(20, 60, facecolor='k', alpha=0.1)
+
 ax = fig.add_subplot(313)
 plt.plot([-5,65],[0,0],'k--')
 plt.plot(time,diags_reference['Work_w']/(time/gamma)/POWER,label=r'Re$\leftangle \phi^*\!\xi_\phi\rightangle$')
@@ -220,7 +232,12 @@ plt.xlim(-2,60)
 remove_axes(ax)
 plot_fig_label(ax,xc=0.025,yc=0.95,label='c')
 plt.text(2,1.75,'Wave action budget')
+
+plt.axvspan(20, 60, facecolor='k', alpha=0.1)
+
 plt.savefig(patho+'K_and_P_and_A_budget_reference', pad_inces=0, bbox_inches='tight')
+
+
 
 # no-drag
 fig = plt.figure(figsize=(8.5,8.))
@@ -239,6 +256,8 @@ remove_axes(ax,bottom=True)
 plt.text(2,.27,'Balanced kinetic energy budget')
 plot_fig_label(ax,xc=0.025,yc=0.95,label='a')
 
+plt.axvspan(20, 60, facecolor='k', alpha=0.1)
+
 ax = fig.add_subplot(312)
 plt.plot([-5,65],[0,0],'k--')
 plt.plot(time,(signal.filtfilt(B,A,diags_nodrag['gamma_r'][:]))/POWER,label=r'$\Gamma_r$')
@@ -252,6 +271,8 @@ plot_fig_label(ax,xc=0.025,yc=0.95,label='b')
 plt.xlim(-2,60)
 plt.text(2,.27,'Wave potential energy budget')
 
+plt.axvspan(20, 60, facecolor='k', alpha=0.1)
+
 ax = fig.add_subplot(313)
 plt.plot([-5,65],[0,0],'k--')
 plt.plot(time,diags_nodrag['Work_w']/(time/gamma)/POWER,label=r'Re$\leftangle \phi^*\!\xi_\phi\rightangle$')
@@ -264,8 +285,10 @@ plt.xlim(-2,60)
 remove_axes(ax)
 plot_fig_label(ax,xc=0.025,yc=0.95,label='c')
 plt.text(2,1.75,'Wave action budget')
-plt.savefig(patho+'K_and_P_and_A_budget_nodrag.png', pad_inces=0, bbox_inches='tight')
 
+plt.axvspan(20, 60, facecolor='k', alpha=0.1)
+
+plt.savefig(patho+'K_and_P_and_A_budget_nodrag.png', pad_inces=0, bbox_inches='tight')
 
 #
 # calculate average budget after equilibration 
