@@ -50,17 +50,11 @@ dk = 2*np.pi/L
 kf = 8*dk
 Lf = 1./kf
 dkf = 1*dk
-U0 = 0.5                   # guessed equilibrated RMS velocity
+U0 = 0.25                   # guessed equilibrated RMS velocity
 epsilon = (U0**2)*mu       # estimated energy input
 sigma_q = np.sqrt(epsilon) # the standard deviation of the random forcing
-sigma_w = 2*sigma_q
-
-# hard
-sigma_q = np.sqrt(epsilon)/2 # the standard deviation of the random forcing
 sigma_w = 4*sigma_q
 
-epsilon_q = (sigma_q**2)/2
-epsilon_w = (sigma_w**2)/2
 
 # time
 dt = 0.000125*Tmu/4
@@ -70,9 +64,8 @@ tmax = 40.*Tgamma
 # scaling non-dimensional numbers
 #
 
-# energy predictions (excluding factors of 1/2 and 2pi)
-K  = epsilon_q/mu
-Kw = epsilon_w/gamma
+K  = (sigma_q**2)/2/mu
+Kw = (sigma_w**2)/2/gamma
 
 # wave equation parameters
 lamb = N/f0/m
