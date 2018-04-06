@@ -72,12 +72,13 @@ sigma_w = 4*sigma_q
 # time
 dt = 0.000125*Tmu/4
 tmax = 60.*Tgamma
+tmax = 40*Tgamma
 #tmax = 80.*Tgamma
 
 # outputs
-path = "output/new/512_reference"
-path_nodrag = "output/new/512_nodrag"
-path_nowaves = "output/new/512_nowaves"
+path = "output/newest/512_reference"
+path_nodrag = "output/newest/512_nodrag"
+path_nowaves = "output/newest/512_nowaves"
 
 #
 # theoretical predictions
@@ -120,15 +121,15 @@ hslash = eta/PSI      # dispersivity
 #
 
 # initialize model class
-model = CoupledModel.Model(L=L,nx=nx, tmax = tmax,dt = dt, twrite=200,
-                    nu4=0.,mu=mu,nu4w=0.,nu=0,nuw=0,muw=gamma,
-                    use_filter=True,save_to_disk=True,
-                    tsave_snapshots=50,path=path,
-                    U = 0., tdiags=50,
-                    f=f0,N=N,m=m,
-                    wavenumber_forcing=kf,width_forcing=dkf,
-                    sigma_q=sigma_q, sigma_w=sigma_w,
-                    use_mkl=True,nthreads=12)
+#model = CoupledModel.Model(L=L,nx=nx, tmax = tmax,dt = dt, twrite=200,
+#                    nu4=0.,mu=mu,nu4w=0.,nu=0,nuw=0,muw=gamma,
+#                    use_filter=True,save_to_disk=True,
+#                    tsave_snapshots=50,path=path,
+#                    U = 0., tdiags=50,
+#                    f=f0,N=N,m=m,
+#                    wavenumber_forcing=kf,width_forcing=dkf,
+#                    sigma_q=sigma_q, sigma_w=sigma_w,
+#                    use_mkl=True,nthreads=12)
 
 model_nodrag = CoupledModel.Model(L=L,nx=nx, tmax = tmax,dt = dt, twrite=200,
                     nu4=0.,mu=0.,nu4w=0.,nu=0,nuw=0,muw=gamma,
@@ -140,37 +141,36 @@ model_nodrag = CoupledModel.Model(L=L,nx=nx, tmax = tmax,dt = dt, twrite=200,
                     sigma_q=sigma_q, sigma_w=sigma_w,
                     use_mkl=True,nthreads=12)
 
-model_nowaves = CoupledModel.Model(L=L,nx=nx, tmax = tmax,dt = dt, twrite=200,
-                    nu4=0.,mu=mu,nu4w=0.,nu=0,nuw=0,muw=gamma*0,
-                    use_filter=True,save_to_disk=True,
-                    tsave_snapshots=50,path=path_nowaves,
-                    U = 0., tdiags=50,
-                    f=f0,N=N,m=m,
-                    wavenumber_forcing=kf,width_forcing=dkf,
-                    sigma_q=sigma_q, sigma_w=sigma_w*0,
-                    use_mkl=True,nthreads=12)
+#model_nowaves = CoupledModel.Model(L=L,nx=nx, tmax = tmax,dt = dt, twrite=200,
+#                    nu4=0.,mu=mu,nu4w=0.,nu=0,nuw=0,muw=gamma*0,
+#                    use_filter=True,save_to_disk=True,
+#                    tsave_snapshots=50,path=path_nowaves,
+#                    U = 0., tdiags=50,
+#                    f=f0,N=N,m=m,
+#                    wavenumber_forcing=kf,width_forcing=dkf,
+#                    sigma_q=sigma_q, sigma_w=sigma_w*0,
+#                    use_mkl=True,nthreads=12)
 
 
 # rest initial conditions
-model.set_q(np.zeros([model.nx]*2))
-model.set_phi(np.zeros([model.nx]*2)+0j)
-model._invert()
+#model.set_q(np.zeros([model.nx]*2))
+#model.set_phi(np.zeros([model.nx]*2)+0j)
+#model._invert()
 
-model_nodrag.set_q(np.zeros([model.nx]*2))
-model_nodrag.set_phi(np.zeros([model.nx]*2)+0j)
+model_nodrag.set_q(np.zeros([model_nodrag.nx]*2))
+model_nodrag.set_phi(np.zeros([model_nodrag.nx]*2)+0j)
 model_nodrag._invert()
-
-model_nowaves.set_q(np.zeros([model.nx]*2))
-model_nowaves.set_phi(np.zeros([model.nx]*2)+0j)
-model_nowaves._invert()
+#
+#model_nowaves.set_q(np.zeros([model.nx]*2))
+#model_nowaves.set_phi(np.zeros([model.nx]*2)+0j)
+#model_nowaves._invert()
 
 
 #
 # run the model
 #
 model_nodrag.run()
-model.run()
-model_nowaves.run()
+#model.run()
+#model_nowaves.run()
 
 
-1222

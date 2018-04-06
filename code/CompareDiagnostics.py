@@ -12,9 +12,9 @@ import scipy.signal as signal
 
 plt.close('all')
 
-pathi_nodrag = "output/new/512_nodrag/"
+pathi_nodrag = "output/newest/512_nodrag/"
 pathi_nowaves = "output/new/512_nowaves/"
-pathi_reference = "output/new/512_reference/"
+pathi_reference = "output/newest/512_reference/"
 patho = "../writeup/figs/"
 
 #
@@ -54,7 +54,6 @@ U0 = 0.25                   # guessed equilibrated RMS velocity
 epsilon = (U0**2)*mu       # estimated energy input
 sigma_q = np.sqrt(epsilon) # the standard deviation of the random forcing
 sigma_w = 4*sigma_q
-
 
 # time
 dt = 0.000125*Tmu/4
@@ -97,6 +96,7 @@ diags_reference = h5py.File(pathi_reference+"diagnostics.h5","r")
 diags_nodrag = h5py.File(pathi_nodrag+"diagnostics.h5","r")
 diags_nowaves = h5py.File(pathi_nowaves+"diagnostics.h5","r")
 time = diags_reference['time'][:]*gamma
+timend = diags_nodrag['time'][:]*gamma
 
 #
 # plotting
@@ -106,59 +106,64 @@ time = diags_reference['time'][:]*gamma
 #E = epsilon_q/gamma
 Ew = PHI**2 / 2
 E = Ew
+Eq = Ew/2
 K = (sigma_q**2)/mu/2
 POWER = (sigma_w**2 / 2)
 
 # energies
-fig = plt.figure(figsize=(8.5,8.))
+fig = plt.figure(figsize=(8.5,10.))
 ax = fig.add_subplot(311)
-plt.plot([-5,65],[K,K]/E,'k--')
-pk = plt.plot(time,diags_reference['ke_qg'][:]/E)
-pp = plt.plot(time,diags_nodrag['ke_qg'][:]/E)
-plt.plot(time,diags_nowaves['ke_qg'][:]/E)
-plt.xlim(-2,60)
-plt.ylabel(r"Balanced kinetic energy $[\mathcal{K}/E]$")
+plt.plot([-5,65],[K,K]/Eq,'k--')
+pk = plt.plot(time,diags_reference['ke_qg'][:]/Eq)
+pp = plt.plot(timend,diags_nodrag['ke_qg'][:]/Eq)
+plt.plot(time,diags_nowaves['ke_qg'][:]/Eq)
+plt.xlim(-2,37.5)
+plt.ylabel(r"Balanced kinetic energy $[\mathcal{K}/E_q]$")
 plt.yticks([0,0.5,1.0,1.5,2.0])
 plt.legend(loc=(0.35,-0.2),ncol=3)
+#remove_axes(ax,bottom=True)
 remove_axes(ax,bottom=True)
 plot_fig_label(ax,xc=0.025,yc=0.95,label=r'$\mathcal{K}$')
 
-plt.text(47,1.28,'No drag')
-plt.text(33,0.1,'Reference')
-plt.text(15,0.575,'No waves')
+plt.text(26.5,1.5,r"No-drag")
+plt.text(33,0.35,'Reference')
+plt.text(29.5,0.85,'No-wave')
 
-plt.axvspan(20, 60, facecolor='k', alpha=0.1)
+plt.axvspan(10, 60, facecolor='k', alpha=0.1)
 
 ax = fig.add_subplot(312)
 plt.plot(time,(diags_reference['pe_niw'][:])/E,label=r'Reference',color=pk[0].get_color())
-plt.plot(time,(diags_nodrag['pe_niw'][:])/E,label=r'No drag',color=pp[0].get_color())
-plt.ylabel(r"Wave potential energy $[\mathcal{P}/E]$")
+plt.plot(timend,(diags_nodrag['pe_niw'][:])/E,label=r'No drag',color=pp[0].get_color())
+plt.ylabel(r"Wave potential energy $[\mathcal{P}/E_q]$")
 plt.ylim(0,.35)
 plt.yticks([0,0.1,.2,.3])
-plt.xlim(-2,60)
+plt.xlim(-2,37.5)
 remove_axes(ax)
 plot_fig_label(ax,xc=0.025,yc=0.95,label=r'$\mathcal{P}$')
 remove_axes(ax,bottom=True)
-plt.text(47,0.3,'No drag')
-plt.text(28,0.04,'Reference')
+plt.text(26.5,0.2,'No-drag')
+plt.text(30,0.04,'Reference')
 
-plt.axvspan(20, 60, facecolor='k', alpha=0.1)
+plt.axvspan(10,60, facecolor='k', alpha=0.1)
 
 ax = fig.add_subplot(313)
 plt.plot([-5,65],[Ew,Ew]/E,'k--')
 plt.plot(time,(diags_reference['ke_niw'][:])/E,label=r'Reference',color=pk[0].get_color())
-plt.plot(time,(diags_nodrag['ke_niw'][:])/E,label=r'No drag',color=pp[0].get_color())
-plt.ylabel(r"Wave kinetic energy $[f_0\mathcal{A}/E]$")
+plt.plot(timend,(diags_nodrag['ke_niw'][:])/E,label=r'No drag',color=pp[0].get_color())
+plt.ylabel(r"Wave kinetic energy $[f_0\mathcal{A}/E_w]$")
 plt.xlabel(r"Time $[t\,\,\gamma]$")
-plt.xlim(-2,60)
+plt.xlim(-2,37.5)
 remove_axes(ax)
 plt.ylim(0,3.5)
 
-plt.axvspan(20, 60, facecolor='k', alpha=0.1)
+plt.axvspan(10, 60, facecolor='k', alpha=0.1)
 
 plt.yticks([0,1.0,2.0,3.0],["0.0","1.0","2.0","3.0"])
 plot_fig_label(ax,xc=0.025,yc=0.95,label=r'$\mathcal{A}$')
-plt.savefig(patho+'energies_comparison' , pad_inces=0, bbox_inches='tight')
+plt.savefig('figs/ForcedDissipative_ComparisonEnergy.png' , pad_inces=0, bbox_inches='tight')
+plt.savefig('figs/ForcedDissipative_ComparisonEnergy.tiff' , pad_inces=0, bbox_inches='tight')
+
+stop
 
 ## averages
 #Am =  diags['ke_niw'][eq].mean()
