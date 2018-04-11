@@ -115,7 +115,9 @@ fig = plt.figure(figsize=(8.5,10.))
 ax = fig.add_subplot(311)
 plt.plot([-5,65],[K,K]/Eq,'k--')
 pk = plt.plot(time,diags_reference['ke_qg'][:]/Eq)
+#plt.plot(time,diags_reference['ke_euler'][:]/Eq,'--',color=pk[0].get_color(),alpha=0.5)
 pp = plt.plot(timend,diags_nodrag['ke_qg'][:]/Eq)
+#plt.plot(timend,diags_nodrag['ke_euler'][:]/Eq,'--',color=pp[0].get_color(),alpha=0.5)
 plt.plot(time,diags_nowaves['ke_qg'][:]/Eq)
 plt.xlim(-2,37.5)
 plt.ylabel(r"Balanced kinetic energy $[\mathcal{K}/E_q]$")
@@ -123,7 +125,7 @@ plt.yticks([0,0.5,1.0,1.5,2.0])
 plt.legend(loc=(0.35,-0.2),ncol=3)
 #remove_axes(ax,bottom=True)
 remove_axes(ax,bottom=True)
-plot_fig_label(ax,xc=0.025,yc=0.95,label=r'$\mathcal{K}$')
+plot_fig_label(ax,xc=0.025,yc=0.95,label=r'$\mathcal{K}^L$')
 
 plt.text(26.5,1.5,r"No-drag")
 plt.text(33,0.35,'Reference')
@@ -176,7 +178,7 @@ stop
 #
 ## First, design the Buterworth filter
 N  = 2    # Filter order
-Wn = 0.05 # Cutoff frequency
+Wn = 0.025 # Cutoff frequency
 B, A = signal.butter(N, Wn, output='ba')
 #gamma_a_filt = signal.filtfilt(B,A, gamma_a)
 #gamma_r_filt = signal.filtfilt(B,A, gamma_r)
@@ -191,7 +193,7 @@ plt.plot(time,(diags_reference['Work_q'][:])/(time/gamma)/POWER,label=r'$-\lefta
 plt.plot(time,diags_reference['ep_psi'][:]/POWER,label=r'$-2\mu\,\mathcal{K}$')
 plt.plot(time,-(signal.filtfilt(B,A,diags_reference['gamma_r'][:]))/POWER,label=r'$-\Gamma_r$')
 plt.plot(time,-(signal.filtfilt(B,A,diags_reference['gamma_a'][:]))/POWER,label=r'$-\Gamma_a$')
-plt.plot(time,(diags_reference['xi_a'][:]+diags_reference['xi_r'][:])/POWER,label=r'$\Xi$')
+plt.plot(time,(diags_reference['xi'][:])/POWER,label=r'$\Xi$')
 
 plt.legend(loc=(0.25,1.035),ncol=5)
 plt.ylabel(r"Power [$\dot \mathcal{K} \,/\, W$]")
@@ -232,20 +234,146 @@ plot_fig_label(ax,xc=0.025,yc=0.95,label='c')
 plt.text(2,1.75,'Wave action budget')
 
 plt.axvspan(20, 60, facecolor='k', alpha=0.1)
-
 plt.savefig(patho+'K_and_P_and_A_budget_reference', pad_inces=0, bbox_inches='tight')
 
 
+
+#
+# calculate and plot buget
+#
+
+y_pos = np.arange(6)
+colors = ['0.5', 'b', 'm', 'r', 'maroon','g']
+colors = ['0.5', 'r', 'b', 'b', 'b','r']
+
+fig = plt.figure(figsize=(12,8))
+
+ax = fig.add_subplot(121)
+
+eq = (time>24)&(time<=35)
+residual =  -(diags_reference['gamma_r'][eq]+diags_reference['gamma_a'][eq]) + (diags_reference['xi'][eq])+ diags_reference['ep_psi'][eq].mean() + (diags_reference['Work_q'][eq]/(time[eq]/gamma))
+work_q_tot = (diags_reference['Work_q'][eq]/(time[eq]/gamma)).mean()
+norm = work_q_tot.sum()
+work_q_tot = (diags_reference['Work_q'][eq]/(time[eq]/gamma)).mean()/norm
+gamma_q_tot =  -(diags_reference['gamma_r'][eq]+diags_reference['gamma_a'][eq]).mean()/norm
+gamma_q_r =  -(diags_reference['gamma_r'][eq]).mean()/norm
+gamma_q_a =  -(diags_reference['gamma_a'][eq]).mean()/norm
+#xi_tot =  (diags_reference['xi_r'][eq]+diags_reference['xi_a'][eq]).mean()/norm
+xi_tot = (diags_reference['xi'][eq]).mean()/norm
+ep_psi_tot = diags_reference['ep_psi'][eq].mean()/norm
+residual_K = residual.mean()/norm
+
+# P buget
+residual = diags_reference['gamma_r'][eq]+diags_reference['gamma_a'][eq]+diags_reference['chi_phi'][eq]
+gamma_tot = (diags_reference['gamma_r'][eq]+diags_reference['gamma_a'][eq]).mean()
+norm = gamma_tot.sum()
+gamma_r = (diags_reference['gamma_r'][eq]).mean()/norm
+gamma_a = (diags_reference['gamma_a'][eq]).mean()/norm
+chi_phi_tot = diags_reference['chi_phi'][eq].mean()/norm
+residual_P_reference = residual.mean()/norm
+
+
+# A budget
+residual = diags_reference['Work_w'][eq]/(time[eq]/gamma)+diags_reference['ep_phi'][eq]
+work_w_tot =  (diags_reference['Work_w'][eq]/(time[eq]/gamma) ).mean()
+norm = work_w_tot.sum()
+work_w_tot =  (diags_reference['Work_w'][eq]/(time[eq]/gamma) ).mean()/norm
+ep_phi_tot = (diags_reference['ep_phi'][eq]).mean()/norm
+residual_A = residual.mean()/norm
+
+
+
+budget = [residual_K,xi_tot,ep_psi_tot,gamma_q_a,gamma_q_r,work_q_tot]
+plt.barh(y_pos, budget, align='center', alpha=0.35, color = colors)
+plt.yticks([])
+plt.xlim(-1.,1.05)
+ax.spines['right'].set_visible(False)
+ax.spines['left'].set_visible(False)
+ax.spines['top'].set_visible(False)
+plt.text(0.335,4.95,r"Forcing",fontsize=11)
+plt.text(-0.35,3.91,r"$-\Gamma_r$",fontsize=13)
+plt.text(-0.35,2.91,r"$-\Gamma_a$",fontsize=13)
+plt.text(-0.95,3.85,r"Stimulated",fontsize=11,rotation=40)
+plt.text(-0.8,3.85,r"generation",fontsize=11,rotation=40)
+plt.text(-0.51,1.91,r"Bottom drag",fontsize=11)
+plt.text(0.2,.91,r"Wave streaming",fontsize=11)
+plt.text(0.3,-.09,r"Residual",fontsize=11)
+plt.xticks([-1,-.5,0,.5,1.])
+plt.xlabel(r"$\mathcal{K}^L$-budget")
+
+bbox_props = dict(boxstyle="round4", color=None,fc='w', ec="0.5", lw=1.5)
+t = ax.text(-.7, 6.1, "Reference", ha="center", va="center", rotation=0,
+            size=13,
+            bbox=bbox_props)
+
+ax = fig.add_subplot(122)
+eq = timend>24
+
+residual =  -(diags_nodrag['gamma_r'][eq]+diags_nodrag['gamma_a'][eq]) + (diags_nodrag['xi'][eq])+ diags_nodrag['ep_psi'][eq].mean() + (diags_nodrag['Work_q'][eq]/(time[eq]/gamma))
+work_q_tot = (diags_nodrag['Work_q'][eq]/(time[eq]/gamma)).mean()
+norm = work_q_tot.sum()
+work_q_tot = (diags_nodrag['Work_q'][eq]/(time[eq]/gamma)).mean()/norm
+gamma_q_tot =  -(diags_nodrag['gamma_r'][eq]+diags_nodrag['gamma_a'][eq]).mean()/norm
+gamma_q_r =  -(diags_nodrag['gamma_r'][eq]).mean()/norm
+gamma_q_a =  -(diags_nodrag['gamma_a'][eq]).mean()/norm
+#xi_tot =  (diags_nodrag['xi_r'][eq]+diags_nodrag['xi_a'][eq]).mean()/norm
+xi_tot = (diags_nodrag['xi'][eq]).mean()/norm
+ep_psi_tot = diags_nodrag['ep_psi'][eq].mean()/norm
+residual_K = residual.mean()/norm
+
+# P buget
+residual = diags_nodrag['gamma_r'][eq]+diags_nodrag['gamma_a'][eq]+diags_nodrag['chi_phi'][eq]
+gamma_tot = (diags_nodrag['gamma_r'][eq]+diags_nodrag['gamma_a'][eq]).mean()
+norm = gamma_tot.sum()
+gamma_r = (diags_nodrag['gamma_r'][eq]).mean()/norm
+gamma_a = (diags_nodrag['gamma_a'][eq]).mean()/norm
+chi_phi_tot = diags_nodrag['chi_phi'][eq].mean()/norm
+residual_P_nodrag = residual.mean()/norm
+
+budget = [residual_K,xi_tot,ep_psi_tot,gamma_q_a,gamma_q_r,work_q_tot]
+plt.barh(y_pos, budget, align='center', alpha=0.35, color = colors)
+plt.yticks([])
+plt.xlim(-1.,1.05)
+ax.spines['right'].set_visible(False)
+ax.spines['left'].set_visible(False)
+ax.spines['top'].set_visible(False)
+plt.text(0.335,4.95,r"Forcing",fontsize=11)
+plt.text(-0.6,3.91,r"$-\Gamma_r$",fontsize=13)
+plt.text(-0.6,2.91,r"$-\Gamma_a$",fontsize=13)
+plt.text(-1.4,3.85,r"Stimulated",fontsize=11,rotation=40)
+plt.text(-1.25,3.85,r"generation",fontsize=11,rotation=40)
+#plt.text(-0.525,1.91,r"Bottom drag",fontsize=11)
+plt.text(0.2,.91,r"Wave streaming",fontsize=11)
+plt.text(0.3,-.09,r"Residual",fontsize=11)
+plt.xticks([-1,-.5,0,.5,1.])
+plt.xlabel(r"$\mathcal{K}^L$-budget")
+
+bbox_props = dict(boxstyle="round4", color=None,fc='w', ec="0.5", lw=1.5)
+t = ax.text(-.7, 6.1, "No-drag", ha="center", va="center", rotation=0,
+            size=13,
+            bbox=bbox_props)
+
+plt.savefig('figs/ForcedDissipative_Kbudgets.png' , pad_inces=0, bbox_inches='tight')
+plt.savefig('figs/ForcedDissipative_Kbudgets.tiff' , pad_inces=0, bbox_inches='tight')
+
+
+#plt.xlabel('Usage')
+#plt.title('Programming language usage')
+
+
+
+
+stop
 
 # no-drag
 fig = plt.figure(figsize=(8.5,8.))
 ax = fig.add_subplot(311)
 plt.plot([-5,65],[0,0],'k--')
-plt.plot(time,(diags_nodrag['Work_q'][:])/(time/gamma)/POWER,label=r'$-\leftangle \psi \xi_q \rightangle$')
-plt.plot(time,diags_nodrag['ep_psi'][:]/POWER,label=r'$-2\mu\,\mathcal{K}$')
-plt.plot(time,-(signal.filtfilt(B,A,diags_nodrag['gamma_r'][:]))/POWER,label=r'$-\Gamma_r$')
-plt.plot(time,-(signal.filtfilt(B,A,diags_nodrag['gamma_a'][:]))/POWER,label=r'$-\Gamma_a$')
-plt.plot(time,(diags_nodrag['xi_a'][:]+diags_nodrag['xi_r'][:])/POWER,label=r'$\Xi$')
+plt.plot(timend,(diags_nodrag['Work_q'][:])/(timend/gamma)/POWER,label=r'$-\leftangle \psi \xi_q \rightangle$')
+plt.plot(timend,diags_nodrag['ep_psi'][:]/POWER,label=r'$-2\mu\,\mathcal{K}$')
+plt.plot(timend,-(signal.filtfilt(B,A,diags_nodrag['gamma_r'][:]))/POWER,label=r'$-\Gamma_r$')
+plt.plot(timend,-(signal.filtfilt(B,A,diags_nodrag['gamma_a'][:]))/POWER,label=r'$-\Gamma_a$')
+plt.plot(timend,(diags_nodrag['xi'][:])/POWER,label=r'$\Xi$')
 plt.legend(loc=(0.25,1.035),ncol=5)
 plt.ylabel(r"Power [$\dot \mathcal{K} \,/\, W$]")
 plt.ylim(-.3,.3)
@@ -258,9 +386,9 @@ plt.axvspan(20, 60, facecolor='k', alpha=0.1)
 
 ax = fig.add_subplot(312)
 plt.plot([-5,65],[0,0],'k--')
-plt.plot(time,(signal.filtfilt(B,A,diags_nodrag['gamma_r'][:]))/POWER,label=r'$\Gamma_r$')
-plt.plot(time,(signal.filtfilt(B,A,diags_nodrag['gamma_a'][:]))/POWER,label=r'$\Gamma_a$')
-plt.plot(time,diags_nodrag['chi_phi'][:]/POWER,label=r'$-2\gamma\mathcal{P}$')
+plt.plot(timend,(signal.filtfilt(B,A,diags_nodrag['gamma_r'][:]))/POWER,label=r'$\Gamma_r$')
+plt.plot(timend,(signal.filtfilt(B,A,diags_nodrag['gamma_a'][:]))/POWER,label=r'$\Gamma_a$')
+plt.plot(timend,diags_nodrag['chi_phi'][:]/POWER,label=r'$-2\gamma\mathcal{P}$')
 plt.ylim(-.3,.3)
 plt.legend(loc=(.55,.975),ncol=3)
 plt.ylabel(r"Power [$\dot \mathcal{P} \,/\, W$]")
@@ -273,8 +401,8 @@ plt.axvspan(20, 60, facecolor='k', alpha=0.1)
 
 ax = fig.add_subplot(313)
 plt.plot([-5,65],[0,0],'k--')
-plt.plot(time,diags_nodrag['Work_w']/(time/gamma)/POWER,label=r'Re$\leftangle \phi^*\!\xi_\phi\rightangle$')
-plt.plot(time,diags_nodrag['ep_phi']/POWER,label=r'$-2\gamma\, f_0 \mathcal{A}$')
+plt.plot(timend,diags_nodrag['Work_w']/(timend/gamma)/POWER,label=r'Re$\leftangle \phi^*\!\xi_\phi\rightangle$')
+plt.plot(timend,diags_nodrag['ep_phi']/POWER,label=r'$-2\gamma\, f_0 \mathcal{A}$')
 plt.xlabel(r"$t\,\, \gamma$")
 plt.ylabel(r"Power [$f_0 \dot \mathcal{A} \,/\, W$]")
 plt.legend(loc=1,ncol=2)
@@ -285,6 +413,8 @@ plot_fig_label(ax,xc=0.025,yc=0.95,label='c')
 plt.text(2,1.75,'Wave action budget')
 
 plt.axvspan(20, 60, facecolor='k', alpha=0.1)
+
+stops
 
 plt.savefig(patho+'K_and_P_and_A_budget_nodrag.png', pad_inces=0, bbox_inches='tight')
 
@@ -319,7 +449,8 @@ work_q_tot = (diags_reference['Work_q'][eq]/(time[eq]/gamma)).mean()
 norm = work_q_tot.sum()
 work_q_tot = (diags_reference['Work_q'][eq]/(time[eq]/gamma)).mean()/norm
 gamma_q_tot =  -(diags_reference['gamma_r'][eq]+diags_reference['gamma_a'][eq]).mean()/norm
-xi_tot =  (diags_reference['xi_r'][eq]+diags_reference['xi_a'][eq]).mean()/norm
+#xi_tot =  (diags_reference['xi_r'][eq]+diags_reference['xi_a'][eq]).mean()/norm
+xi_tot = diags_reference['xi'][eq]/norm
 ep_psi_tot = diags_reference['ep_psi'][eq].mean()/norm
 residual_K = residual.mean()/norm
 
@@ -350,6 +481,7 @@ norm = work_q_tot.sum()
 work_q_tot = (diags_nodrag['Work_q'][eq]/(time[eq]/gamma)).mean()/norm
 gamma_q_tot =  -(diags_nodrag['gamma_r'][eq]+diags_nodrag['gamma_a'][eq]).mean()/norm
 xi_tot =  (diags_nodrag['xi_r'][eq]+diags_nodrag['xi_a'][eq]).mean()/norm
+xi_tot = diagns_nodrag['xi'][eq]/norm
 ep_psi_tot = diags_nodrag['ep_psi'][eq].mean()/norm
 residual_K = residual.mean()/norm
 
@@ -361,6 +493,7 @@ norm = work_q_tot.sum()
 work_q_tot = (diags_nowaves['Work_q'][eq]/(time[eq]/gamma)).mean()/norm
 gamma_q_tot =  -(diags_nowaves['gamma_r'][eq]+diags_nowaves['gamma_a'][eq]).mean()/norm
 xi_tot =  (diags_nowaves['xi_r'][eq]+diags_nowaves['xi_a'][eq]).mean()/norm
+xi_tot = diagns_nowaves['xi'][eq]/norm
 ep_psi_tot = diags_nowaves['ep_psi'][eq].mean()/norm
 residual_K = residual.mean()/norm
 
